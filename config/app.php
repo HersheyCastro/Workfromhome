@@ -196,6 +196,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         ConsoleTVs\Charts\ChartsServiceProvider::class,
+        Barryvdh\DomPDF\ServiceProvider::class,
 
     ],
 
@@ -255,6 +256,7 @@ return [
         'Html'         => Collective\Html\HtmlFacade::class,
         'HTML'         => Collective\Html\HtmlFacade::class,
         'Guard'        => App\Permissions\Guard::class,
+         'PDF' => Barryvdh\DomPDF\Facade::class,
     ],
 
     

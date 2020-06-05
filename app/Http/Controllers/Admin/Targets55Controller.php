@@ -729,6 +729,7 @@ class Targets55Controller extends Controller {
 									'efficiency' =>  $request->input('efficiency'), 
 									'quality' =>  $request->input('quality'), 
 									'timeliness' =>  $request->input('timeliness'), 
+									'eqt_ave' =>  $request->input('eqt_ave'), 
 	                            ]);
 
 		if($taskcount>$existTask)

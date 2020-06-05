@@ -44,17 +44,23 @@
                 
             </div>
             <div class="form-group {{ $errors->has('efficiency') ? 'is-invalid' : '' }}">
-              <label >Efficiency</label>
-              <input type="number" name="efficiency" class="form-control" value="{{ $targets55->efficiency}}" /> 
+              <label >Efficiency </label><span style="font-weight: 500;font-size:12px; color: red"> (Leave blank if n/a)</span>
+              <input type="number" name="efficiency" class="form-control eqt" value="{{ $targets55->efficiency}}" /> 
             </div>
             <div class="form-group {{ $errors->has('quality') ? 'is-invalid' : '' }}">
-              <label >Quality</label>
-              <input type="number" name="quality" class="form-control" value="{{ $targets55->quality}}" /> 
+              <label >Quality </label><span style="font-weight: 500;font-size:12px; color: red"> (Leave blank if n/a)</span>
+              <input type="number" name="quality" class="form-control eqt" value="{{ $targets55->quality}}" /> 
             </div>
             <div class="form-group {{ $errors->has('timeliness') ? 'is-invalid' : '' }}">
-              <label >Timeliness</label>
-              <input type="number" name="timeliness" class="form-control" value="{{ $targets55->timeliness}}" /> 
+              <label >Timeliness </label><span style="font-weight: 500;font-size:12px; color: red"> (Leave blank if n/a)</span>
+              <input type="number" name="timeliness" class="form-control eqt" value="{{ $targets55->timeliness}}" /> 
             </div>
+
+             <div class="form-group {{ $errors->has('eqt_ave') ? 'is-invalid' : '' }}">
+              <label >Average</label>
+              <input type="number" name="eqt_ave" class="form-control" value="" id="totalave" readonly /> 
+            </div>
+
            <!--  <div class="form-group {{ $errors->has('duration') ? 'is-invalid' : '' }}">
                 {!! Form::label('duration', 'Duration', array('class'=>'control-label')) !!}
                     <span style="font-weight: 700; color: red">*</span>
@@ -344,6 +350,24 @@ jQuery(document).ready(function($)
         $("#addfile_toggle").slideToggle( "slow");
 
     });  
+
+    $(".eqt").blur(function()
+   {
+      var ave = 0;
+      sum = 0;
+      count=0;
+
+      $(".eqt").each(function(i,e){
+        if ($(e).val() != "") count++;
+        sum += Number($(this).val());
+      });
+      ave = sum / count;
+      $("#totalave").val(ave.toFixed(2));
+    
+   });
+
+
+   $(".eqt").blur();
 }); 
 </script>
 <script>

@@ -317,19 +317,20 @@ jQuery(document).ready(function($)
 
     });  
 
-   $(".weight").blur(function(){
+   $(".weight").blur(function()
+   {
       var sum = 0;
-	$(".weight").each(function(){
-		sum += Number($(this).val());
-	});
-	if(sum>100) {
-	    val="<div style='color:red; font-weight:bold'>" + sum + "</div>";
-	} else if(sum<100) {
-	    val="<div style='color:orange; font-weight:bold'>" + sum + "</div>";
+      $(".weight").each(function(){
+        sum += Number($(this).val());
+      });
+      if(sum>100) {
+          val="<div style='color:red; font-weight:bold'>" + sum + "</div>";
+      } else if(sum<100) {
+          val="<div style='color:orange; font-weight:bold'>" + sum + "</div>";
 
-	} else {
-	    val="<div style='font-weight:bold'>" + sum + "</div>";
-	}
+      } else {
+          val="<div style='font-weight:bold'>" + sum + "</div>";
+      }
       $("#totalweight").html(val);
    });
 

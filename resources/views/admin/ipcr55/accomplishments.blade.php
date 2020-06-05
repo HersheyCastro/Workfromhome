@@ -94,6 +94,7 @@
               <th width="15%">Efficiency</th>
               <th width="15%">Quality</th>
               <th width="15%">Timeliness</th>
+              <th width="15%">Average</th>
               <th width="15%">Actual Verification</th>
               <!-- <th>Evaluation/Remarks from Supervisor</th> -->
               
@@ -145,6 +146,7 @@
                           <td rowspan="{{$tasks->where('targets_id', $target->id)->count() ?? '1'}}">{{$target->efficiency}}%</td>
                           <td rowspan="{{$tasks->where('targets_id', $target->id)->count() ?? '1'}}">{{$target->quality}}%</td>
                           <td rowspan="{{$tasks->where('targets_id', $target->id)->count() ?? '1'}}">{{$target->timeliness}}%</td>
+                          <td rowspan="{{$tasks->where('targets_id', $target->id)->count() ?? '1'}}">{{$target->eqt_ave}}%</td>
                         @endif
                         
                         <td>

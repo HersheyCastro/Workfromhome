@@ -82,7 +82,7 @@
                     </nav>
             </form>
 
-
+           <button type="button" type="button" onclick="location.href ='{{ route('admin'.'.printIPCR',$ipcr55->id) }}'"class="btn btn-primary">Print IPCR Targets</button>
           <table id="t01" class="table table-hover table-responsive table-bordered" width="100%" >
             <tr>
               <th width="15%">Strategic Objective</th>

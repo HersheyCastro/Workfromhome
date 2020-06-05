@@ -115,6 +115,8 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'admin', 'as' => 'admin.'], 
     Route::post('tasksusers55/massDelete', ['as' => 'tasksusers55.massDelete','uses' => 'Admin\TasksUsers55Controller@massDelete',]);
     Route::resource('tasksusers55','Admin\TasksUsers55Controller');
 
+    Route::get('printIPCR/{id}', ['as' => 'printIPCR','uses' => 'Admin\Ipcr55Controller@printIPCR',]);
+    
 
     Route::get('query/{division_id}',function($division_id){
 

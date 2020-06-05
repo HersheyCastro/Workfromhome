@@ -28,6 +28,7 @@ use DB;
 use App\StrategicObjectives55;
 use App\Ipcr_users;
 use DateTime;
+use PDF;
 
 
 
@@ -323,14 +324,11 @@ class Ipcr55Controller extends Controller {
 		$id = decrypt($id);
 		// return $id;
 
-		$mytime = Carbon::now();
-		$ddate =$mytime;
-		$date = new DateTime($ddate);
-		$weekfromform = $date->format("W");
-		// return $week;
-		if($request->input('targetweekform')==""){
-			// return "null";
-			$weekfromform = $weekfromform;
+		// $mytime = Carbon::now();
+		// $ddate =$mytime;
+		// $date = new DateTime($ddate);
+		// $weekfromform = $date->format("W");
+		
 			$tasks =DB::select("SELECT  
 								T4.strategicobjectives55_id as SO,
                                 T1.successindicators55_id as SI,
@@ -405,115 +403,12 @@ class Ipcr55Controller extends Controller {
 								WHERE T1.ipcr55_id = $id and T2.deleted_at IS NULL and T1.deleted_at IS NULL order by SO, SI, targets) ipcrtable group by SI
 								");
 
-
-
 			$rowSIcount = collect($rowSIcount);
 
 			foreach($rowSIcount as $rowsi) {
 				$si_row[$rowsi->si_id] = $rowsi->si_count;
 			}
 
-			// return $so_row;
-
-		}else {
-			// return "not null";
-			$week_year = $request->input('targetweekform');
-			$week = substr($week_year, strpos($week_year, "W") + 1);   
-			$weekfromform = $week;
-			// return $week;
-			$tasks =DB::select("SELECT  
-								T4.strategicobjectives55_id as SO,
-                                T1.successindicators55_id as SI,
-								T1.name as targets,
-								T1.id as targets_id,
-								T2.id as tasks_id,
-								T2.name as tasks,
-								T2.weight as weight,
-			 					T2.percent_completed as percent,
-			 					T2.means_verification as verification,
-			 					T2.actual_verification as actual_verification,
-			 					T2.evaluation as evaluation,
-								T3.id as ipcr_id,
-								T2.active as week,
-                                T5.strategic_objective_name as SOname,
-                                T4.success_indicator_name as SIname
-								FROM tasks55 T2 LEFT JOIN targets55 T1 ON T1.id = T2.targets55_id 
-								LEFT JOIN ipcr55 T3 ON T1.ipcr55_id = T3.id
-                                LEFT JOIN successindicators55 T4 ON
-                                T1.successindicators55_id = T4.id
-                                LEFT JOIN strategicobjectives55 T5 ON T4.strategicobjectives55_id = T5.id
-								WHERE T1.ipcr55_id = $id and T2.deleted_at IS NULL and T1.deleted_at IS NULL and T2.active=$weekfromform order by SO, SI, targets
-
-								");
-			$tasks = collect($tasks);
-
-			$rowSOcount = DB::select("select count(so) as so_count, so as so_id from (SELECT  
-								T4.strategicobjectives55_id as SO,
-                                T1.successindicators55_id as SI,
-								T1.name as targets,
-								T1.id as targets_id,
-								T2.id as tasks_id,
-								T2.name as tasks,
-								T2.weight as weight,
-			 					T2.percent_completed as percent,
-			 					T2.means_verification as verification,
-			 					T2.actual_verification as actual_verification,
-			 					T2.evaluation as evaluation,
-								T3.id as ipcr_id,
-								T2.active as week
-								FROM tasks55 T2 LEFT JOIN targets55 T1 ON T1.id = T2.targets55_id 
-								LEFT JOIN ipcr55 T3 ON T1.ipcr55_id = T3.id
-                                LEFT JOIN successindicators55 T4 ON T1.successindicators55_id = T4.id
-								WHERE T1.ipcr55_id = $id and T2.deleted_at IS NULL and T1.deleted_at IS NULL and T2.active=$weekfromform order by SO, SI, targets) ipcrtable group by SO
-								");
-
-
-
-			$rowSOcount = collect($rowSOcount);
-
-			foreach($rowSOcount as $rowso) {
-				$so_row[$rowso->so_id] = $rowso->so_count;
-			}
-
-
-			$rowSIcount = DB::select("select count(SI) as si_count, SI as si_id from (SELECT  
-								T4.strategicobjectives55_id as SO,
-                                T1.successindicators55_id as SI,
-								T1.name as targets,
-								T1.id as targets_id,
-								T2.id as tasks_id,
-								T2.name as tasks,
-								T2.weight as weight,
-			 					T2.percent_completed as percent,
-			 					T2.means_verification as verification,
-			 					T2.actual_verification as actual_verification,
-			 					T2.evaluation as evaluation,
-								T3.id as ipcr_id,
-								T2.active as week
-								FROM tasks55 T2 LEFT JOIN targets55 T1 ON T1.id = T2.targets55_id 
-								LEFT JOIN ipcr55 T3 ON T1.ipcr55_id = T3.id
-                                LEFT JOIN successindicators55 T4 ON T1.successindicators55_id = T4.id
-								WHERE T1.ipcr55_id = $id and T2.deleted_at IS NULL and T1.deleted_at IS NULL and T2.active=$weekfromform order by SO, SI, targets) ipcrtable group by SI
-								");
-
-
-
-			$rowSIcount = collect($rowSIcount);
-
-			foreach($rowSIcount as $rowsi) {
-				$si_row[$rowsi->si_id] = $rowsi->si_count;
-			}
-
-
-		}
-		// return $weekfromform;
-
-
-
-		
-		
-
-		
 		// $view = "view";
 		return view('admin.ipcr55.accomplishments', compact('ipcr55', "status55","users55","successindicators55","targets","tasks","strategicobjectives","so_row","si_row"));
 	}
@@ -566,7 +461,6 @@ class Ipcr55Controller extends Controller {
 		$strategicobjectives = StrategicObjectives55::all();
 		
 
-
 		$ipcr55 = Ipcr55::find(decrypt($id));
 		// return $ipcr55;
 		$status55 = Status55::pluck("status_name", "id");
@@ -581,108 +475,105 @@ class Ipcr55Controller extends Controller {
 		$weekfromform = $date->format("W");
 		
 			
-			$tasks =DB::select("SELECT  
-								T4.strategicobjectives55_id as SO,
-                                T1.successindicators55_id as SI,
-								T1.name as targets,
-								T1.id as targets_id,
-								T2.id as tasks_id,
-								T2.name as tasks,
-								T2.weight as weight,
-			 					T2.percent_completed as percent,
-			 					T2.means_verification as verification,
-			 					T2.evaluation as evaluation,
-								T3.id as ipcr_id,
-								T2.active as week,
-                                T5.strategic_objective_name as SOname,
-                                T4.success_indicator_name as SIname,
-                                T2.evaluation_divhead as evaluation_divhead
-								FROM tasks55 T2 LEFT JOIN targets55 T1 ON T1.id = T2.targets55_id 
-								LEFT JOIN ipcr55 T3 ON T1.ipcr55_id = T3.id
-                                LEFT JOIN successindicators55 T4 ON T1.successindicators55_id = T4.id
-                                LEFT JOIN strategicobjectives55 T5 ON T4.strategicobjectives55_id = T5.id
-								WHERE T1.ipcr55_id = $id and T2.deleted_at IS NULL and T1.deleted_at IS NULL order by SO, SI, targets
-								");
-			$tasks = collect($tasks);
+		$tasks =DB::select("SELECT  
+							T4.strategicobjectives55_id as SO,
+							T1.successindicators55_id as SI,
+							T1.name as targets,
+							T1.id as targets_id,
+							T2.id as tasks_id,
+							T2.name as tasks,
+							T2.weight as weight,
+							T2.percent_completed as percent,
+							T2.means_verification as verification,
+							T2.evaluation as evaluation,
+							T3.id as ipcr_id,
+							T2.active as week,
+							T5.strategic_objective_name as SOname,
+							T4.success_indicator_name as SIname,
+							T2.evaluation_divhead as evaluation_divhead
+							FROM tasks55 T2 LEFT JOIN targets55 T1 ON T1.id = T2.targets55_id 
+							LEFT JOIN ipcr55 T3 ON T1.ipcr55_id = T3.id
+							LEFT JOIN successindicators55 T4 ON T1.successindicators55_id = T4.id
+							LEFT JOIN strategicobjectives55 T5 ON T4.strategicobjectives55_id = T5.id
+							WHERE T1.ipcr55_id = $id and T2.deleted_at IS NULL and T1.deleted_at IS NULL order by SO, SI, targets
+							");
+		$tasks = collect($tasks);
 
-			
+		
 
-			$rowSOcount = DB::select("select count(so) as so_count, so as so_id from (SELECT  
-								T4.strategicobjectives55_id as SO,
-                                T1.successindicators55_id as SI,
-								T1.name as targets,
-								T1.id as targets_id,
-								T2.id as tasks_id,
-								T2.name as tasks,
-								T2.weight as weight,
-			 					T2.percent_completed as percent,
-			 					T2.means_verification as verification,
-			 					T2.evaluation as evaluation,
-								T3.id as ipcr_id,
-								T2.active as week,
-                                T2.evaluation_divhead as evaluation_divhead
-								FROM tasks55 T2 LEFT JOIN targets55 T1 ON T1.id = T2.targets55_id 
-								LEFT JOIN ipcr55 T3 ON T1.ipcr55_id = T3.id
-                                LEFT JOIN successindicators55 T4 ON T1.successindicators55_id = T4.id
-								WHERE T1.ipcr55_id = $id and T2.deleted_at IS NULL and T1.deleted_at IS NULL order by SO, SI, targets) ipcrtable group by SO
-								");
-
-
-
-			$rowSOcount = collect($rowSOcount);
-
-			if($rowSOcount->count()==0){
-				$so_row=0;
-			}
-
-			foreach($rowSOcount as $rowso) {
-				$so_row[$rowso->so_id] = $rowso->so_count;
-			}
+		$rowSOcount = DB::select("select count(so) as so_count, so as so_id from (SELECT  
+							T4.strategicobjectives55_id as SO,
+							T1.successindicators55_id as SI,
+							T1.name as targets,
+							T1.id as targets_id,
+							T2.id as tasks_id,
+							T2.name as tasks,
+							T2.weight as weight,
+							T2.percent_completed as percent,
+							T2.means_verification as verification,
+							T2.evaluation as evaluation,
+							T3.id as ipcr_id,
+							T2.active as week,
+							T2.evaluation_divhead as evaluation_divhead
+							FROM tasks55 T2 LEFT JOIN targets55 T1 ON T1.id = T2.targets55_id 
+							LEFT JOIN ipcr55 T3 ON T1.ipcr55_id = T3.id
+							LEFT JOIN successindicators55 T4 ON T1.successindicators55_id = T4.id
+							WHERE T1.ipcr55_id = $id and T2.deleted_at IS NULL and T1.deleted_at IS NULL order by SO, SI, targets) ipcrtable group by SO
+							");
 
 
 
+		$rowSOcount = collect($rowSOcount);
 
-			$rowSIcount = DB::select("select count(SI) as si_count, SI as si_id from (SELECT  
-								T4.strategicobjectives55_id as SO,
-                                T1.successindicators55_id as SI,
-								T1.name as targets,
-								T1.id as targets_id,
-								T2.id as tasks_id,
-								T2.name as tasks,
-								T2.weight as weight,
-			 					T2.percent_completed as percent,
-			 					T2.means_verification as verification,
-			 					T2.evaluation as evaluation,
-								T3.id as ipcr_id,
-								T2.active as week,
-                                T2.evaluation_divhead as evaluation_divhead
-								FROM tasks55 T2 LEFT JOIN targets55 T1 ON T1.id = T2.targets55_id 
-								LEFT JOIN ipcr55 T3 ON T1.ipcr55_id = T3.id
-                                LEFT JOIN successindicators55 T4 ON T1.successindicators55_id = T4.id
-								WHERE T1.ipcr55_id = $id and T2.deleted_at IS NULL and T1.deleted_at IS NULL order by SO, SI, targets) ipcrtable group by SI
-								");
+		if($rowSOcount->count()==0){
+			$so_row=0;
+		}
+
+		foreach($rowSOcount as $rowso) {
+			$so_row[$rowso->so_id] = $rowso->so_count;
+		}
 
 
 
-			$rowSIcount = collect($rowSIcount);
 
-			if($rowSIcount->count()==0){
-				$si_row=0;
-			}
+		$rowSIcount = DB::select("select count(SI) as si_count, SI as si_id from (SELECT  
+							T4.strategicobjectives55_id as SO,
+							T1.successindicators55_id as SI,
+							T1.name as targets,
+							T1.id as targets_id,
+							T2.id as tasks_id,
+							T2.name as tasks,
+							T2.weight as weight,
+							T2.percent_completed as percent,
+							T2.means_verification as verification,
+							T2.evaluation as evaluation,
+							T3.id as ipcr_id,
+							T2.active as week,
+							T2.evaluation_divhead as evaluation_divhead
+							FROM tasks55 T2 LEFT JOIN targets55 T1 ON T1.id = T2.targets55_id 
+							LEFT JOIN ipcr55 T3 ON T1.ipcr55_id = T3.id
+							LEFT JOIN successindicators55 T4 ON T1.successindicators55_id = T4.id
+							WHERE T1.ipcr55_id = $id and T2.deleted_at IS NULL and T1.deleted_at IS NULL order by SO, SI, targets) ipcrtable group by SI
+							");
 
-			foreach($rowSIcount as $rowsi) {
-				$si_row[$rowsi->si_id] = $rowsi->si_count;
-			}
 
-			// return $so_row;
+
+		$rowSIcount = collect($rowSIcount);
+
+		if($rowSIcount->count()==0){
+			$si_row=0;
+		}
+
+		foreach($rowSIcount as $rowsi) {
+			$si_row[$rowsi->si_id] = $rowsi->si_count;
+		}
+
+		// return $so_row;
 
 
 		// $view = "view";
 		return view('admin.ipcr55.show', compact('ipcr55', "status55","users55","successindicators55","targets","tasks","strategicobjectives","so_row","si_row","id"));
 	}
-
-
-
 
 	/**
 	 * Store a newly created ipcr55 in storage.
@@ -1485,6 +1376,131 @@ class Ipcr55Controller extends Controller {
 		Session::flash('updated', "A record has been updated");
 		// return redirect()->route('admin'.'.ipcr55.index');
 		return redirect()->route('admin'.'.indexaccomplishments');
+	}
+
+	public function printIPCR($id)
+	{
+		$users55 = Users55::pluck("firstname", "id");
+		// $successindicators55 = SuccessIndicators55::pluck("success_indicator_name", "id",);
+		$successindicators55 = SuccessIndicators55::all();
+		$strategicobjectives = StrategicObjectives55::all();
+		
+
+		$ipcr55 = Ipcr55::find($id);
+		// return $ipcr55;
+		$status55 = Status55::pluck("status_name", "id");
+		$targets = Targets55::where('ipcr55_id',$id)->orderBy('successindicators55_id')->get();
+		
+		$id =$id;
+		// return $id;
+
+		$mytime = Carbon::now();
+		$ddate =$mytime;
+		$date = new DateTime($ddate);
+		$weekfromform = $date->format("W");
+		
+			
+		$tasks =DB::select("SELECT  
+							T4.strategicobjectives55_id as SO,
+							T1.successindicators55_id as SI,
+							T1.name as targets,
+							T1.id as targets_id,
+							T2.id as tasks_id,
+							T2.name as tasks,
+							T2.weight as weight,
+							T2.percent_completed as percent,
+							T2.means_verification as verification,
+							T2.evaluation as evaluation,
+							T3.id as ipcr_id,
+							T2.active as week,
+							T5.strategic_objective_name as SOname,
+							T4.success_indicator_name as SIname,
+							T2.evaluation_divhead as evaluation_divhead
+							FROM tasks55 T2 LEFT JOIN targets55 T1 ON T1.id = T2.targets55_id 
+							LEFT JOIN ipcr55 T3 ON T1.ipcr55_id = T3.id
+							LEFT JOIN successindicators55 T4 ON T1.successindicators55_id = T4.id
+							LEFT JOIN strategicobjectives55 T5 ON T4.strategicobjectives55_id = T5.id
+							WHERE T1.ipcr55_id = $id and T2.deleted_at IS NULL and T1.deleted_at IS NULL order by SO, SI, targets
+							");
+		$tasks = collect($tasks);
+
+		
+
+		$rowSOcount = DB::select("select count(so) as so_count, so as so_id from (SELECT  
+							T4.strategicobjectives55_id as SO,
+							T1.successindicators55_id as SI,
+							T1.name as targets,
+							T1.id as targets_id,
+							T2.id as tasks_id,
+							T2.name as tasks,
+							T2.weight as weight,
+							T2.percent_completed as percent,
+							T2.means_verification as verification,
+							T2.evaluation as evaluation,
+							T3.id as ipcr_id,
+							T2.active as week,
+							T2.evaluation_divhead as evaluation_divhead
+							FROM tasks55 T2 LEFT JOIN targets55 T1 ON T1.id = T2.targets55_id 
+							LEFT JOIN ipcr55 T3 ON T1.ipcr55_id = T3.id
+							LEFT JOIN successindicators55 T4 ON T1.successindicators55_id = T4.id
+							WHERE T1.ipcr55_id = $id and T2.deleted_at IS NULL and T1.deleted_at IS NULL order by SO, SI, targets) ipcrtable group by SO
+							");
+
+
+
+		$rowSOcount = collect($rowSOcount);
+
+		if($rowSOcount->count()==0){
+			$so_row=0;
+		}
+
+		foreach($rowSOcount as $rowso) {
+			$so_row[$rowso->so_id] = $rowso->so_count;
+		}
+
+
+
+
+		$rowSIcount = DB::select("select count(SI) as si_count, SI as si_id from (SELECT  
+							T4.strategicobjectives55_id as SO,
+							T1.successindicators55_id as SI,
+							T1.name as targets,
+							T1.id as targets_id,
+							T2.id as tasks_id,
+							T2.name as tasks,
+							T2.weight as weight,
+							T2.percent_completed as percent,
+							T2.means_verification as verification,
+							T2.evaluation as evaluation,
+							T3.id as ipcr_id,
+							T2.active as week,
+							T2.evaluation_divhead as evaluation_divhead
+							FROM tasks55 T2 LEFT JOIN targets55 T1 ON T1.id = T2.targets55_id 
+							LEFT JOIN ipcr55 T3 ON T1.ipcr55_id = T3.id
+							LEFT JOIN successindicators55 T4 ON T1.successindicators55_id = T4.id
+							WHERE T1.ipcr55_id = $id and T2.deleted_at IS NULL and T1.deleted_at IS NULL order by SO, SI, targets) ipcrtable group by SI
+							");
+
+
+
+		$rowSIcount = collect($rowSIcount);
+
+		if($rowSIcount->count()==0){
+			$si_row=0;
+		}
+
+		foreach($rowSIcount as $rowsi) {
+			$si_row[$rowsi->si_id] = $rowsi->si_count;
+		}
+
+		
+		// return view('admin.ipcr55.printIPCR', compact('ipcr55', "status55","users55","successindicators55","targets","tasks","strategicobjectives","so_row","si_row","id"));
+	
+		$pdf = PDF::loadView('admin.ipcr55.printIPCR',compact('ipcr55', "status55","users55","successindicators55","targets","tasks","strategicobjectives","so_row","si_row","id"))->setPaper('a4', 'landscape');
+		// return view('admin.ipcr55.printIPCR', compact('ipcr55'));
+        return $pdf->download('ipcr.pdf');
+       
+
 	}
 
 	/**
