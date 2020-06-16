@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 05, 2020 at 08:45 AM
+-- Generation Time: Jun 10, 2020 at 03:55 AM
 -- Server version: 10.4.11-MariaDB
 -- PHP Version: 7.2.31
 
@@ -30,6 +30,7 @@ SET time_zone = "+00:00";
 CREATE TABLE `division55` (
   `id` int(10) UNSIGNED NOT NULL,
   `division_name` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `division_chief` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `color` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_by` int(11) NOT NULL,
   `active` int(11) NOT NULL,
@@ -42,16 +43,16 @@ CREATE TABLE `division55` (
 -- Dumping data for table `division55`
 --
 
-INSERT INTO `division55` (`id`, `division_name`, `color`, `created_by`, `active`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 'PCMD', NULL, 1, 1, '2020-03-27 00:26:46', '2020-03-27 00:26:46', NULL),
-(2, 'FAD', NULL, 1, 1, '2020-03-27 00:27:04', '2020-03-27 00:27:04', NULL),
-(3, 'ETDD', NULL, 1, 1, '2020-03-27 00:27:24', '2020-03-27 00:27:24', NULL),
-(4, 'EUSTDD', NULL, 1, 1, '2020-03-27 00:27:41', '2020-03-27 00:27:41', NULL),
-(5, 'ITDD', NULL, 1, 1, '2020-03-28 19:36:22', '2020-03-28 19:36:22', NULL),
-(6, 'RITTD', NULL, 1, 1, '2020-03-28 19:36:55', '2020-03-28 19:36:55', NULL),
-(7, 'HRIDD', NULL, 1, 1, '2020-03-28 19:37:06', '2020-03-28 19:37:06', NULL),
-(8, 'IG', NULL, 1, 1, '2020-03-28 19:37:34', '2020-03-28 19:37:34', NULL),
-(9, 'OED/ODED', NULL, 1, 1, '2020-03-28 19:37:58', '2020-03-28 19:37:58', NULL);
+INSERT INTO `division55` (`id`, `division_name`, `division_chief`, `color`, `created_by`, `active`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(1, 'PCMD', 'Grace Estillore', NULL, 1, 1, '2020-03-27 00:26:46', '2020-03-27 00:26:46', NULL),
+(2, 'FAD', 'Sonia Cabangon', NULL, 1, 1, '2020-03-27 00:27:04', '2020-03-27 00:27:04', NULL),
+(3, 'ETDD', 'Edna Nacianceno', NULL, 1, 1, '2020-03-27 00:27:24', '2020-03-27 00:27:24', NULL),
+(4, 'EUSTDD', 'Nonilo Peña', NULL, 1, 1, '2020-03-27 00:27:41', '2020-03-27 00:27:41', NULL),
+(5, 'ITDD', 'Niñaliza Escorial', NULL, 1, 1, '2020-03-28 19:36:22', '2020-03-28 19:36:22', NULL),
+(6, 'RITTD', 'Russell Pili', NULL, 1, 1, '2020-03-28 19:36:55', '2020-03-28 19:36:55', NULL),
+(7, 'HRIDD', 'Ermie Baccara', NULL, 1, 1, '2020-03-28 19:37:06', '2020-03-28 19:37:06', NULL),
+(8, 'IG', 'Mark Ivan Roblas', NULL, 1, 1, '2020-03-28 19:37:34', '2020-03-28 19:37:34', NULL),
+(9, 'OED/ODED', '', NULL, 1, 1, '2020-03-28 19:37:58', '2020-03-28 19:37:58', NULL);
 
 -- --------------------------------------------------------
 
@@ -176,7 +177,7 @@ INSERT INTO `ipcr55` (`id`, `ipcr_name`, `semester`, `year`, `status55_id`, `cre
 (111, 'PCMD', 1, 2020, 5, NULL, '1', '2020-04-20 00:30:38', '2020-04-20 09:13:34', '2020-04-20 09:13:34', 4, NULL),
 (112, 'BATHAN', 1, 2020, 5, NULL, '1', '2020-04-20 01:09:07', '2020-04-20 01:09:07', NULL, 5, NULL),
 (113, 'LOBO', 1, 2020, 2, NULL, '1', '2020-04-20 01:15:56', '2020-04-20 02:32:14', NULL, 17, NULL),
-(114, 'CastroM', 1, 2020, 4, NULL, '1', '2020-04-20 02:35:45', '2020-04-20 02:36:56', NULL, 1, NULL),
+(114, 'CastroM', 1, 2018, 2, NULL, '1', '2020-04-20 02:35:45', '2020-04-20 02:36:56', NULL, 1, NULL),
 (115, 'Lobo-additionalAccomplishment', NULL, NULL, 2, NULL, '1', '2020-04-20 03:20:51', '2020-04-20 04:33:31', '2020-04-20 04:33:31', 17, '113'),
 (116, 'Lobo-additionalAccomplishment', NULL, NULL, 2, NULL, '1', '2020-04-20 03:47:02', '2020-04-20 04:33:37', '2020-04-20 04:33:37', 17, '113'),
 (117, 'Lobo-additionalAccomplishment', NULL, NULL, 2, NULL, '1', '2020-04-20 03:53:35', '2020-04-20 04:35:00', '2020-04-20 04:35:00', 17, '113'),
@@ -200,7 +201,17 @@ INSERT INTO `ipcr55` (`id`, `ipcr_name`, `semester`, `year`, `status55_id`, `cre
 (135, 'Almazar-additionalAccomplishment', NULL, NULL, 2, NULL, '1', '2020-04-23 11:57:55', '2020-04-24 01:02:42', '2020-04-24 01:02:42', 19, '121'),
 (136, 'Almazar-additionalAccomplishment', NULL, NULL, 2, NULL, '1', '2020-04-24 01:10:12', '2020-04-24 01:19:05', '2020-04-24 01:19:05', 19, '121'),
 (137, 'IPCR_PCMD', 1, 2020, 6, NULL, '1', '2020-04-28 00:09:21', '2020-04-28 00:10:01', NULL, 4, NULL),
-(138, 'PCMD_IPCR1', 1, 2020, 5, NULL, '1', '2020-04-28 00:10:24', '2020-04-28 00:10:24', NULL, 4, NULL);
+(138, 'PCMD_IPCR1', 1, 2020, 5, NULL, '1', '2020-04-28 00:10:24', '2020-04-28 00:10:24', NULL, 4, NULL),
+(139, 'MaryRoseNavarro-1stSem-Targets', 1, 2020, 5, NULL, '1', '2020-06-06 19:20:03', '2020-06-06 20:47:41', '2020-06-06 20:47:41', 35, NULL),
+(140, 'maryrose-sample', 1, 2020, 5, NULL, '1', '2020-06-06 20:49:21', '2020-06-06 20:49:21', NULL, 35, NULL),
+(141, 'Castro-additionalAccomplishment', NULL, NULL, 2, NULL, '1', '2020-06-06 22:26:45', '2020-06-06 22:26:45', NULL, 1, '87'),
+(142, 'hersheytest', 2, 2020, 2, NULL, '1', '2020-06-07 00:39:55', '2020-06-07 20:01:41', NULL, 1, NULL),
+(143, 'hersheytest2', 1, 2020, 2, NULL, '1', '2020-06-07 08:45:56', '2020-06-08 02:12:25', NULL, 1, NULL),
+(144, 'hersheytest3', 2, 2020, 5, NULL, '1', '2020-06-07 08:46:29', '2020-06-07 08:46:29', NULL, 1, NULL),
+(145, 'Castro-additionalAccomplishment', NULL, NULL, 2, NULL, '1', '2020-06-07 14:20:47', '2020-06-07 14:20:47', NULL, 1, '114'),
+(146, 'Castro-additional-20200607-7', 1, 2018, 2, NULL, '1', '2020-06-07 15:12:45', '2020-06-07 15:12:45', '2020-06-07 15:55:14', 1, '114'),
+(147, 'Castro-additionalAccomplishment', NULL, NULL, 2, NULL, '1', '2020-06-07 15:17:54', '2020-06-07 15:17:54', NULL, 1, '114'),
+(148, 'Castro-additional-20200607-9', 1, 2018, 2, NULL, '1', '2020-06-07 15:25:29', '2020-06-07 15:25:29', NULL, 1, '114');
 
 -- --------------------------------------------------------
 
@@ -265,7 +276,8 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (29, '2020_04_08_032050_add_origid_to_ipcr55', 8),
 (30, '2020_04_14_135518_add_origid_to_targets55', 9),
 (31, '2020_05_31_224357_add_efficiency_to_targets55', 10),
-(32, '2020_06_04_040718_add_eqt_ave_to_targets55', 11);
+(32, '2020_06_04_040718_add_eqt_ave_to_targets55', 11),
+(33, '2020_06_08_050602_add_division_chief_to_division55', 12);
 
 -- --------------------------------------------------------
 
@@ -834,7 +846,7 @@ CREATE TABLE `targets55` (
   `efficiency` decimal(5,2) DEFAULT NULL,
   `quality` decimal(5,2) DEFAULT NULL,
   `timeliness` decimal(5,2) DEFAULT NULL,
-  `eqt_ave` decimal(5,2) NOT NULL
+  `eqt_ave` decimal(5,2) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -884,8 +896,8 @@ INSERT INTO `targets55` (`id`, `name`, `description`, `users55_id`, `duration_s`
 (157, '<p>1. PMIS v4.0 Test Plan and Test Cases Phase 1</p>\r\n<p>- Project Manager Account</p>\r\n<p>- Project Leader Account</p>\r\n<p>- FAD Account</p>\r\n<p>- Admin Account</p>\r\n<p>- Super Admin Account</p>\r\n<p>&nbsp;</p>\r\n<p>2. HRMIS v10 Test Plan and Test Cases</p>\r\n<p>- Employee Account</p>\r\n<p>- Finance Account</p>\r\n<p>- Officer Account&nbsp;</p>\r\n<p>- Executive Account</p>', NULL, 19016, NULL, NULL, '0', NULL, '1', 51, 113, '2020-04-20 01:22:18', '2020-04-20 09:02:26', NULL, NULL, '0.00', '0.00', '0.00', '0.00'),
 (158, '<p>HRMIS v10 (whole)</p>\r\n<p>* System Design Specifications&nbsp;</p>\r\n<p>* Software Requirements Specifications</p>\r\n<p>* User Manuals</p>\r\n<p>* Other related manuals or documentations</p>\r\n<p>&nbsp; &nbsp; &nbsp;</p>\r\n<p>Note:</p>\r\n<p>Functional Requirement is already under Software Requirements Specification&nbsp;</p>', NULL, 19016, NULL, NULL, NULL, NULL, '1', 51, 113, '2020-04-20 01:23:30', '2020-04-20 01:23:52', NULL, NULL, '0.00', '0.00', '0.00', '0.00'),
 (159, '<p>Test Cases for:</p>\r\n<p>&nbsp;</p>\r\n<p>1. PMIS v4.0 Test cases Phase 1</p>\r\n<p>- Project Manager Account</p>\r\n<p>- Project Leader Account</p>\r\n<p>- FAD Account</p>\r\n<p>- Admin Account</p>\r\n<p>- Super Admin Account</p>\r\n<p>&nbsp;</p>\r\n<p>2. HRMIS v10 Test Cases</p>\r\n<p>- Employee Account</p>\r\n<p>- Finance Account</p>\r\n<p>- Officer Account</p>\r\n<p>- Executive Officer</p>\r\n<p>&nbsp;</p>\r\n<p>3. PMISv4.0 re-test and regression testing - Phase 1</p>', NULL, 19016, NULL, NULL, NULL, NULL, '1', 5, 113, '2020-04-20 01:24:29', '2020-04-20 03:18:18', '2020-04-20 03:18:18', NULL, '0.00', '0.00', '0.00', '0.00'),
-(160, '<p>Sample</p>', NULL, 17017, NULL, NULL, NULL, NULL, '1', 1, 114, '2020-04-20 02:36:19', '2020-04-20 02:36:19', NULL, NULL, '0.00', '0.00', '0.00', '0.00'),
-(161, '<p>Sample</p>', NULL, 17017, NULL, NULL, NULL, NULL, '1', 1, 114, '2020-04-20 02:36:52', '2020-04-20 02:36:52', NULL, NULL, '0.00', '0.00', '0.00', '0.00'),
+(160, '<p>Sample</p>', NULL, 17017, NULL, NULL, '0', NULL, '1', 1, 114, '2020-04-20 02:36:19', '2020-06-07 09:37:48', NULL, NULL, '5.00', '5.00', '5.00', '5.00'),
+(161, '<p>Sample</p>', NULL, 17017, NULL, NULL, '0', NULL, '1', 1, 114, '2020-04-20 02:36:52', '2020-06-07 15:25:29', NULL, NULL, '0.00', '0.00', '0.00', '0.00'),
 (162, '<p>Test Cases for:</p>\r\n<p>&nbsp;</p>\r\n<p>1. PMIS v4.0 Test cases Phase 1</p>\r\n<p>- Project Manager Account</p>\r\n<p>- Project Leader Account</p>\r\n<p>- FAD Account</p>\r\n<p>- Admin Account</p>\r\n<p>- Super Admin Account</p>\r\n<p>&nbsp;</p>\r\n<p>2. HRMIS v10 Test Cases</p>\r\n<p>- Employee Account</p>\r\n<p>- Finance Account</p>\r\n<p>- Officer Account</p>\r\n<p>- Executive Officer</p>\r\n<p>&nbsp;</p>\r\n<p>3. PMISv4.0 re-test and regression testing - Phase 1</p>', NULL, 17, NULL, NULL, '0', NULL, NULL, 57, 113, '2020-04-20 03:20:51', '2020-04-20 05:07:07', NULL, NULL, '0.00', '0.00', '0.00', '0.00'),
 (163, '<p>Test Cases for:</p>\r\n<p>&nbsp;</p>\r\n<p>1. PMIS v4.0 Test cases Phase 1</p>\r\n<p>- Project Manager Account</p>\r\n<p>- Project Leader Account</p>\r\n<p>- FAD Account</p>\r\n<p>- Admin Account</p>\r\n<p>- Super Admin Account</p>\r\n<p>&nbsp;</p>\r\n<p>2. HRMIS v10 Test Cases</p>\r\n<p>- Employee Account</p>\r\n<p>- Finance Account</p>\r\n<p>- Officer Account</p>\r\n<p>- Executive Officer</p>\r\n<p>&nbsp;</p>\r\n<p>3. PMISv4.0 re-test and regression testing - Phase 1</p>', NULL, 17, NULL, NULL, NULL, NULL, NULL, 57, 113, '2020-04-20 03:47:02', '2020-04-20 04:33:37', NULL, NULL, '0.00', '0.00', '0.00', '0.00'),
 (164, '<p>Test Cases for:</p>\r\n<p>&nbsp;</p>\r\n<p>1. PMIS v4.0 Test cases Phase 1</p>\r\n<p>- Project Manager Account</p>\r\n<p>- Project Leader Account</p>\r\n<p>- FAD Account</p>\r\n<p>- Admin Account</p>\r\n<p>- Super Admin Account</p>\r\n<p>&nbsp;</p>\r\n<p>2. HRMIS v10 Test Cases</p>\r\n<p>- Employee Account</p>\r\n<p>- Finance Account</p>\r\n<p>- Officer Account</p>\r\n<p>- Executive Officer</p>\r\n<p>&nbsp;</p>\r\n<p>3. PMISv4.0 re-test and regression testing - Phase 1</p>', NULL, 17, NULL, NULL, NULL, NULL, NULL, 57, 119, '2020-04-20 05:01:38', '2020-04-20 05:01:38', NULL, '162', '0.00', '0.00', '0.00', '0.00'),
@@ -954,7 +966,13 @@ INSERT INTO `targets55` (`id`, `name`, `description`, `users55_id`, `duration_s`
 (227, '<p>Test Cases for:</p>\r\n<p>&nbsp;</p>\r\n<p>1. PMIS v4.0 Test cases Phase 1</p>\r\n<p>- Project Manager Account</p>\r\n<p>- Project Leader Account</p>\r\n<p>- FAD Account</p>\r\n<p>- Admin Account</p>\r\n<p>- Super Admin Account</p>\r\n<p>&nbsp;</p>\r\n<p>2. HRMIS v10 Test Cases</p>\r\n<p>- Employee Account</p>\r\n<p>- Finance Account</p>\r\n<p>- Officer Account</p>\r\n<p>- Executive Officer</p>\r\n<p>&nbsp;</p>\r\n<p>3. PMISv4.0 re-test and regression testing - Phase 1</p>', NULL, 10012, NULL, NULL, NULL, NULL, NULL, 57, 138, '2020-04-28 00:10:24', '2020-04-28 00:10:24', NULL, NULL, '0.00', '0.00', '0.00', '0.00'),
 (228, '<p>Test Cases for:</p>\r\n<p>&nbsp;</p>\r\n<p>1. PMIS v4.0 Test cases Phase 1</p>\r\n<p>- Project Manager Account</p>\r\n<p>- Project Leader Account</p>\r\n<p>- FAD Account</p>\r\n<p>- Admin Account</p>\r\n<p>- Super Admin Account</p>\r\n<p>&nbsp;</p>\r\n<p>2. HRMIS v10 Test Cases</p>\r\n<p>- Employee Account</p>\r\n<p>- Finance Account</p>\r\n<p>- Officer Account</p>\r\n<p>- Executive Officer</p>\r\n<p>&nbsp;</p>\r\n<p>3. PMISv4.0 re-test and regression testing - Phase 1</p>', NULL, 10012, NULL, NULL, NULL, NULL, NULL, 57, 138, '2020-04-28 00:10:24', '2020-04-28 00:10:24', NULL, NULL, '0.00', '0.00', '0.00', '0.00'),
 (229, '<p><span style=\"font-family: Calibri, \'Segoe UI\', Calibri, Thonburi, Arial, Verdana, sans-serif, \'Mongolian Baiti\', \'Microsoft Yi Baiti\', \'Javanese Text\'; font-size: 14.6667px; text-align: center; white-space: pre-wrap;\">- Action taken, as assigned - Updating of PCMD Calendar - Coordination of activites among concerned clients/division</span></p>', NULL, 10012, NULL, NULL, NULL, NULL, NULL, 3, 138, '2020-04-28 00:10:24', '2020-04-28 00:10:24', NULL, NULL, '0.00', '0.00', '0.00', '0.00'),
-(230, '<p><span style=\"font-family: Calibri, \'Segoe UI\', Calibri, Thonburi, Arial, Verdana, sans-serif, \'Mongolian Baiti\', \'Microsoft Yi Baiti\', \'Javanese Text\'; font-size: 14.6667px; white-space: pre-wrap;\">Oversee and/or prepare 90% of simple documents (internal and/or external) within 30 minutes with 1 minor revision</span></p>', NULL, 10012, NULL, NULL, NULL, NULL, NULL, 2, 138, '2020-04-28 00:10:24', '2020-04-28 00:10:24', NULL, NULL, '0.00', '0.00', '0.00', '0.00');
+(230, '<p><span style=\"font-family: Calibri, \'Segoe UI\', Calibri, Thonburi, Arial, Verdana, sans-serif, \'Mongolian Baiti\', \'Microsoft Yi Baiti\', \'Javanese Text\'; font-size: 14.6667px; white-space: pre-wrap;\">Oversee and/or prepare 90% of simple documents (internal and/or external) within 30 minutes with 1 minor revision</span></p>', NULL, 10012, NULL, NULL, NULL, NULL, NULL, 2, 138, '2020-04-28 00:10:24', '2020-04-28 00:10:24', NULL, NULL, '0.00', '0.00', '0.00', '0.00'),
+(231, '<p>hersheytest</p>', NULL, 17017, NULL, NULL, '75', NULL, '1', 1, 142, '2020-06-07 10:40:12', '2020-06-08 01:10:34', NULL, NULL, '5.00', '5.00', '5.00', '5.00'),
+(232, '<p>hersheytest</p>', NULL, 1, NULL, NULL, NULL, NULL, NULL, 1, 145, '2020-06-07 14:20:47', '2020-06-07 14:20:47', NULL, NULL, NULL, NULL, NULL, NULL),
+(233, '<p>test</p>', NULL, 1, NULL, NULL, NULL, NULL, NULL, 1, 146, '2020-06-07 15:12:45', '2020-06-07 15:12:45', NULL, NULL, NULL, NULL, NULL, NULL),
+(234, '<p>Sample</p>', NULL, 1, NULL, NULL, NULL, NULL, NULL, 1, 147, '2020-06-07 15:17:54', '2020-06-07 15:17:54', NULL, '161', NULL, NULL, NULL, NULL),
+(235, '<p>Sample</p>', NULL, 1, NULL, NULL, '0', NULL, NULL, 1, 148, '2020-06-07 15:25:29', '2020-06-07 16:01:33', NULL, '161', NULL, NULL, NULL, NULL),
+(236, '<p>WFH</p>', NULL, 17017, NULL, NULL, '100', NULL, '1', 50, 143, '2020-06-08 02:07:32', '2020-06-08 02:18:34', NULL, NULL, NULL, '5.00', '3.00', '4.00');
 
 -- --------------------------------------------------------
 
@@ -1060,8 +1078,8 @@ INSERT INTO `tasks55` (`id`, `name`, `description`, `targets55_id`, `color`, `du
 (251, 'No task assigned for this week', NULL, 159, NULL, '2020-03-16 00:00:00', '2020-03-20 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'No task assigned for this week', 'Sample Only', '2020-04-20 01:24:29', '2020-04-20 01:50:41', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (252, '1. Create Test Cases for \r\nFAD - Phase 1\r\n\r\n2. Created HRMISv10 \r\nEmployee Account Test Plan\r\n-	Purpose\r\n-	Project Overview\r\n-	Audience\r\n-	Scopes and Levels of Testing\r\n-	Test Effort Estimate\r\n-	Defect Tracking and Reporting', NULL, 157, NULL, '2020-03-23 00:00:00', '2020-03-27 00:00:00', '0', NULL, NULL, NULL, NULL, NULL, NULL, '* Test Cases ID:\r\nTC_PMIS_FAD_1.0 to TC_PMIS_FAD_1.5, \r\n\r\nTC_PMIS_FAD_2.0.1 to TC_PMIS_FAD_2.0.9, \r\n\r\nTC_PMIS_FAD_2.0.2.1 to TC_PMIS_FAD_2.0.2.10\r\n\r\n*Test_Plan_v1_HRMIS - Employee_Account.docx', NULL, '2020-04-20 01:26:06', '2020-04-20 09:02:26', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (253, 'Test Case Execution for Super Admin user - Login Functionality Phase 1', NULL, 159, NULL, '2020-03-23 00:00:00', '2020-03-27 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Test Cases Executed:\r\n\r\nTC_PMIS_SA_1.0,\r\nTC_PMIS_SA_1.1,\r\nTC_PMIS_SA_1.2,\r\nTC_PMIS_SA_1.10,', NULL, '2020-04-20 01:26:47', '2020-04-20 01:50:41', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(254, 'Sample', NULL, 160, NULL, '2020-03-02 00:00:00', '2020-04-21 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Sample Only', NULL, '2020-04-20 02:36:19', '2020-04-20 02:36:19', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(255, 'Sample', NULL, 161, NULL, '2020-03-02 00:00:00', '2020-04-21 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Sample Only', NULL, '2020-04-20 02:36:52', '2020-04-20 02:36:52', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(254, 'Sample', NULL, 160, NULL, '2020-03-02 00:00:00', '2020-04-21 00:00:00', '0', NULL, NULL, NULL, NULL, NULL, NULL, 'Sample Only', NULL, '2020-04-20 02:36:19', '2020-06-07 09:37:48', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(255, 'Sample', NULL, 161, NULL, '2020-03-02 00:00:00', '2020-04-21 00:00:00', '0', NULL, NULL, NULL, NULL, NULL, NULL, 'Sample Only', NULL, '2020-04-20 02:36:52', '2020-06-07 15:25:29', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (256, 'Test Case Execution for Super Admin user - Login Functionality Phase 1', NULL, 162, NULL, '2020-04-01 00:00:00', '2020-04-30 00:00:00', '0', NULL, NULL, '100', NULL, NULL, NULL, NULL, NULL, '2020-04-20 03:20:51', '2020-04-20 05:07:07', NULL, '2020-03-23 00:00:00', '2020-03-27 00:00:00', '<p>Test Cases Executed: TC_PMIS_SA_1.0, TC_PMIS_SA_1.1, TC_PMIS_SA_1.2, TC_PMIS_SA_1.10,</p>', '2', NULL, NULL, NULL),
 (257, 'Test Case Execution for Super Admin user - Login Functionality Phase 1', NULL, 163, NULL, '2020-04-01 00:00:00', '2020-04-30 00:00:00', NULL, NULL, NULL, '100', NULL, NULL, NULL, NULL, NULL, '2020-04-20 03:47:02', '2020-04-20 04:33:37', NULL, '2020-03-23 00:00:00', '2020-03-27 00:00:00', 'Test Cases Executed:\r\n\r\nTC_PMIS_SA_1.0,\r\nTC_PMIS_SA_1.1,\r\nTC_PMIS_SA_1.2,\r\nTC_PMIS_SA_1.10,', '2', NULL, NULL, NULL),
 (258, 'Test Case Execution for Super Admin user - Login Functionality Phase 1', NULL, 164, NULL, '2020-01-04 00:00:00', '1970-01-01 00:00:00', NULL, NULL, NULL, '100', NULL, NULL, NULL, NULL, NULL, '2020-04-20 05:01:38', '2020-04-20 05:01:38', NULL, '2020-03-23 00:00:00', '2020-03-27 00:00:00', '<p>Test Cases Executed: TC_PMIS_SA_1.0, TC_PMIS_SA_1.1, TC_PMIS_SA_1.2, TC_PMIS_SA_1.10,</p>', '4', NULL, NULL, NULL),
@@ -1169,7 +1187,17 @@ INSERT INTO `tasks55` (`id`, `name`, `description`, `targets55_id`, `color`, `du
 (359, '1.) Updated the Calendar of Ms. Grace', NULL, 229, NULL, '2020-01-01 00:00:00', '1970-01-01 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2020-04-28 00:10:24', '2020-04-28 00:10:24', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (360, 'Meeting of Ms. Grace regarding WFH Accomplishments System', NULL, 229, NULL, '2020-01-01 00:00:00', '1970-01-01 00:00:00', NULL, NULL, NULL, '100', NULL, NULL, NULL, NULL, NULL, '2020-04-28 00:10:24', '2020-04-28 00:10:24', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (361, 'Policy Meeting with Division Chief', NULL, 229, NULL, '2020-01-01 00:00:00', '2020-06-30 00:00:00', NULL, NULL, NULL, '100', NULL, NULL, NULL, NULL, NULL, '2020-04-28 00:10:24', '2020-04-28 00:10:24', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(362, '- Action taken, as assigned -Monitoring of record sheet and daily acitvities - Monitoring of documents to be routed thru email/actual', NULL, 230, NULL, '2020-01-01 00:00:00', '2020-06-30 00:00:00', NULL, NULL, NULL, '100', NULL, NULL, NULL, NULL, NULL, '2020-04-28 00:10:24', '2020-04-28 00:10:24', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+(362, '- Action taken, as assigned -Monitoring of record sheet and daily acitvities - Monitoring of documents to be routed thru email/actual', NULL, 230, NULL, '2020-01-01 00:00:00', '2020-06-30 00:00:00', NULL, NULL, NULL, '100', NULL, NULL, NULL, NULL, NULL, '2020-04-28 00:10:24', '2020-04-28 00:10:24', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(363, 'hersheytestt', NULL, 231, NULL, '2020-06-01 00:00:00', '2020-06-12 00:00:00', '50', NULL, NULL, '100', NULL, NULL, '50', 'test', 'nice', '2020-06-07 10:40:12', '2020-06-08 01:45:56', NULL, '2020-06-01 00:00:00', '2020-06-12 00:00:00', '<p><a href=\"http://pcieerd.dost.gov.ph/\">http://pcieerd.dost.gov.ph/</a></p>', '1', 'this is okay', 'ok', NULL),
+(364, 'hershey22222', NULL, 231, NULL, '2020-06-02 00:00:00', '2020-06-12 00:00:00', '25', NULL, NULL, '50', NULL, NULL, '50', 'test', 'nice', '2020-06-07 10:41:28', '2020-06-08 01:45:56', NULL, '2020-06-02 00:00:00', '2020-06-12 00:00:00', '<p><a href=\"http://pcieerd.dost.gov.ph/\">http://pcieerd.dost.gov.ph/</a></p>', '1', 'this is okay', 'ok', NULL),
+(365, 'hersheytest', NULL, 232, NULL, '2020-06-01 00:00:00', '2020-06-12 00:00:00', NULL, NULL, NULL, '100', NULL, NULL, NULL, NULL, NULL, '2020-06-07 14:20:47', '2020-06-07 14:20:47', NULL, '2020-06-01 00:00:00', '2020-06-12 00:00:00', 'hey', '4', NULL, NULL, NULL),
+(366, 'test', NULL, 233, NULL, '2020-06-01 00:00:00', '2020-06-05 00:00:00', NULL, NULL, NULL, '100', NULL, NULL, NULL, NULL, NULL, '2020-06-07 15:12:45', '2020-06-07 15:12:45', NULL, '2020-06-01 00:00:00', '2020-06-05 00:00:00', 'test', '4', NULL, NULL, NULL),
+(367, 'Sample', NULL, 234, NULL, '2020-02-03 00:00:00', '1970-01-01 08:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2020-06-07 15:17:54', '2020-06-07 15:17:54', NULL, '1970-01-01 08:00:00', '1970-01-01 08:00:00', NULL, '4', NULL, NULL, NULL),
+(368, 'test2', NULL, 234, NULL, '2020-06-01 00:00:00', '2020-06-05 00:00:00', NULL, NULL, NULL, '100', NULL, NULL, NULL, NULL, NULL, '2020-06-07 15:17:54', '2020-06-07 15:17:54', NULL, '2020-06-01 00:00:00', '2020-06-05 00:00:00', 'test2', '4', NULL, NULL, NULL),
+(369, 'Sample', NULL, 235, NULL, '2020-02-03 00:00:00', '1970-01-01 08:00:00', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2020-06-07 15:25:29', '2020-06-07 16:01:33', NULL, '1970-01-01 08:00:00', '1970-01-01 08:00:00', NULL, '4', NULL, 'good', NULL),
+(370, 'test3', NULL, 235, NULL, '2020-06-01 00:00:00', '2020-06-05 00:00:00', '0', NULL, NULL, '100', NULL, NULL, NULL, NULL, NULL, '2020-06-07 15:25:29', '2020-06-07 16:01:33', NULL, '2020-06-01 00:00:00', '2020-06-05 00:00:00', 'test3', '4', NULL, 'good', NULL),
+(371, 'code', NULL, 236, NULL, '2020-06-01 00:00:00', '2020-06-05 00:00:00', '75', NULL, NULL, '100', NULL, NULL, '75', 'send link', 'ook', '2020-06-08 02:07:33', '2020-06-08 02:18:34', NULL, '2020-06-08 00:00:00', '2020-06-08 00:00:00', '<p>link</p>', NULL, NULL, NULL, NULL),
+(372, 'debug', NULL, 236, NULL, '2020-06-01 00:00:00', '2020-06-12 00:00:00', '25', NULL, NULL, '100', NULL, NULL, '25', 'link', 'ok', '2020-06-08 02:08:56', '2020-06-08 02:18:34', NULL, '2020-06-08 00:00:00', '2020-06-08 00:00:00', '<p>link</p>', NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -1234,7 +1262,7 @@ CREATE TABLE `users55` (
 INSERT INTO `users55` (`id`, `firstname`, `middlename`, `lastname`, `username`, `email`, `password`, `roles55_id`, `division_id`, `employee_id`, `position`, `remember_token`, `created_at`, `updated_at`, `deleted_at`) VALUES
 (1, 'Maria Hershey', NULL, 'Castro', NULL, 'superadmin@gmail.com', '$2y$10$CNySOL0eRRZ.GTgw3qmr9uMWjbtQvQZ3S7URo1xLMzoLxAyCYmtPu', 3, 1, 17017, NULL, 'WBGMYYpbQsZlArJ6aFfylmim87uvMEVeDA3vLQqRCZZteUYchtxlgAszpQLT', '2020-03-26 19:47:00', '2020-03-26 19:47:00', NULL),
 (2, 'Client', NULL, NULL, NULL, 'client@email.com', '$2y$10$oAEwimCwoLn9YRh6ZoGDSe11uU50qZCYrQqBKJGbMMrf3.x1rwQIu', 2, 3, NULL, NULL, NULL, '2020-03-26 19:47:00', '2020-03-26 19:47:00', NULL),
-(3, 'John Keishner', NULL, 'Romero', 'romeroj', 'keishner.romero@gmail.com', '$2y$10$BTiEsTQYcVUsbJFghO3C4.cSNHZpEKU.Ca5CM7OeXDq83oBVrN1o.', 1, 1, 15013, NULL, 'c2amzsPF97JfjmtkCLwquXY15V8THzOwHjBJ7flHUBFCOBGcM35MCrj0MKdt', '2020-03-30 19:14:30', '2020-04-01 04:33:19', NULL),
+(3, 'John Keishner', NULL, 'Romero', 'romeroj', 'keishner.romero@gmail.com', '$2y$10$BTiEsTQYcVUsbJFghO3C4.cSNHZpEKU.Ca5CM7OeXDq83oBVrN1o.', 1, 1, 15013, NULL, 'fgc6tjY9F51ufR2dGy4R49qJPsHxfGbvSa4jptlpzXwtYGD6lH9jt7ZHMfgm', '2020-03-30 19:14:30', '2020-04-01 04:33:19', NULL),
 (4, 'Grace', NULL, 'Estillore', 'estilloreg', 'gfestillore@gmail.com', '$2y$10$7vDpre243r6CpAQfZcMnCOzN8PaNDfJKnEMZbG69jMGltI.ncNuCe', 4, 1, 10012, NULL, '1Svrxlv7AYD7155iEm9b2Ev9L9Hma2KL4yBQrKOyb0yrpXvvSkndwIc0rTro', '2020-03-30 20:59:07', '2020-03-30 20:59:07', NULL),
 (5, 'Mark Anthony', NULL, 'Bathan', 'bathanm', 'markbathan27@gmail.com', '$2y$10$UJbZBzh4IRktGibG9j5LSOxbd64QreBP/0KDzM7FwaX54wXSqIfgS', 1, 1, 15021, NULL, 'dHAoON1p4ME360zw0bIz2DczIt1flhkn5ww1zKMj7it3uIWZdbVk4nOTmOlQ', '2020-03-30 21:16:44', '2020-03-30 21:16:44', NULL),
 (6, 'Laarni', NULL, 'Piloton', 'pilotonl', 'laarni.piloton@gmail.com', '$2y$10$xcSjS2X24GTq2uXsIJl9IeYBOJLiF/Z29DpplOFo7M6fqGx.mJ4M.', 1, 5, 10137, NULL, 'v0Vc4asvi532SJgrDoKYsQBrypuG0O3vjJVhlx2Wm7Q2kPMjs41mpoHA3Q8f', '2020-03-30 21:17:42', '2020-03-30 21:17:42', NULL),
@@ -1257,7 +1285,8 @@ INSERT INTO `users55` (`id`, `firstname`, `middlename`, `lastname`, `username`, 
 (31, 'Isidro', NULL, 'Querubin', 'querubini', 'cidquerubin@gmail.com', '$2y$10$fi32QTbZwTF0fn4dHh1Zx.85eI.Q3I5lhNHpH5/qAz3dCgDeQgRUK', 7, 2, 10124, NULL, 'E6EYle9MLmXkvopar5FInhP4JhJXt58OwQmD4qwkyqeRwZXmjYc8ClU2Jdjh', '2020-04-20 08:38:36', '2020-04-20 08:38:36', NULL),
 (32, 'Joshua Emmanuel', NULL, 'Hagad', 'hagadj', 'JEHagad11@gmail.com', '$2y$10$TGRN0fBAvLd47vfy07F0RORyXMqlI7EX8Q94qJpr1L5uSmJ/Q3AN2', 3, 1, 19015, NULL, 'qfj6NT7UenWbVRX9WgfbX3yNOkYqY0625T9uBvSI7EH93cKa2QLKGtFrurQa', '2020-04-20 09:08:31', '2020-04-20 09:08:31', NULL),
 (33, 'May-Rose', NULL, NULL, 'parinasm', 'yammie23@gmail.com', '$2y$10$3BGYy4G2rXDWNg89pet6M.xChlZZs8MntfjZTpGPtApqzjQgqQ03S', 7, 3, 4180, NULL, 'THibA5owVFn74uEKSDnjHIPHsjQshWT0AmwhRjA1nfOdBSxAn6bJ9yAkoN7g', '2020-04-23 08:18:31', '2020-04-23 08:18:31', NULL),
-(34, 'Marissa', NULL, 'Dalay', 'dalaym', 'marissadalaymaria@yahoo.com', '$2y$10$fPX0LS7V5qtquCKqD6mbI.3a2K36vw2W/4KCZP8l2kG5x44q7Pmdu', 7, 2, 12154, NULL, 'W4576WLBXG5d3VUup2Ze4pRFH7PRIU9euKAz8WS6KU1f0MS45BbJL6UW5vRE', '2020-04-23 09:29:04', '2020-04-23 09:29:04', NULL);
+(34, 'Marissa', NULL, 'Dalay', 'dalaym', 'marissadalaymaria@yahoo.com', '$2y$10$fPX0LS7V5qtquCKqD6mbI.3a2K36vw2W/4KCZP8l2kG5x44q7Pmdu', 7, 2, 12154, NULL, 'W4576WLBXG5d3VUup2Ze4pRFH7PRIU9euKAz8WS6KU1f0MS45BbJL6UW5vRE', '2020-04-23 09:29:04', '2020-04-23 09:29:04', NULL),
+(35, 'Mary Rose', NULL, 'Navarro', 'navarrom', 'mrnavarro816@gmail.com', '$2y$10$vru1yiyCDsEeDoUja2SNi./RqHLTqA0rA0ZBIiDUxXyAA3sG7nI6G', 3, 2, 18023, NULL, 'Fso1R2AS8wdHquY4WeHNKzQ3Fedff1fGQXBWWHMmaIyhQaHxZZ9qZwqPv7EJ', '2020-06-06 19:18:29', '2020-06-06 19:18:29', NULL);
 
 --
 -- Indexes for dumped tables
@@ -1420,7 +1449,7 @@ ALTER TABLE `files55`
 -- AUTO_INCREMENT for table `ipcr55`
 --
 ALTER TABLE `ipcr55`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=139;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=149;
 
 --
 -- AUTO_INCREMENT for table `ipcr_users`
@@ -1432,7 +1461,7 @@ ALTER TABLE `ipcr_users`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- AUTO_INCREMENT for table `modules55`
@@ -1480,13 +1509,13 @@ ALTER TABLE `successindicators55`
 -- AUTO_INCREMENT for table `targets55`
 --
 ALTER TABLE `targets55`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=231;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=237;
 
 --
 -- AUTO_INCREMENT for table `tasks55`
 --
 ALTER TABLE `tasks55`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=363;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=373;
 
 --
 -- AUTO_INCREMENT for table `tasksusers55`
@@ -1504,7 +1533,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `users55`
 --
 ALTER TABLE `users55`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
 
 --
 -- Constraints for dumped tables

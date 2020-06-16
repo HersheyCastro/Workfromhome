@@ -120,7 +120,7 @@
                             <td>{{ $row->year }}</td>
                            
                             <td>{{ $row->created_at }}</td>
-                            @if($row->active== 1)<td><span class="label label-success">True</span></td>@else<td><span class="label label-danger">False</span></td>@endif
+                            @if($row->active== 1)<td><span class="label label-success">Yes</span></td>@else<td><span class="label label-danger">No</span></td>@endif
                             <td>
    
                                 <div class="btn-group tools">
@@ -246,7 +246,9 @@
                 });
             });
              var tableIpcr55DataTable = $('#Ipcr55DataTable').DataTable(
-             {"dom":"Bfrtip","buttons":[{"extend":"copy","text":"Copy","exportOptions":{"columns":"th:not(:last-child):visible:not(:eq(0))"}},{"extend":"excel","text":"Excel","exportOptions":{"columns":"th:not(:last-child):visible:not(:eq(0))"}},{"extend":"pdf","text":"PDF","exportOptions":{"columns":"th:not(:last-child):visible:not(:eq(0))"}},{"extend":"print","text":"Print","exportOptions":{"stripHtml":false,"columns":"th:not(:last-child):visible:not(:eq(0))"}}],"columnDefs":[{"width":"30px","targets":0,"searchable":false,"orderable":false,"visible":true},{"targets":1,"searchable":true,"orderable":true,"visible":true},{"targets":2,"searchable":true,"orderable":true,"visible":true},{"targets":3,"searchable":true,"orderable":true,"visible":true},{"targets":4,"searchable":true,"orderable":true,"visible":true},{"targets":5,"searchable":true,"orderable":true,"visible":true},{"targets":6,"searchable":true,"orderable":true,"visible":true},{"targets":7,"searchable":false,"orderable":false,"visible":true}],"responsive":true,"autoWidth":true}
+             {"dom":"Bfrtip","buttons":[{"extend":"copy","text":"Copy","exportOptions":{"columns":"th:not(:last-child):visible:not(:eq(0))"}},{"extend":"excel","text":"Excel","exportOptions":{"columns":"th:not(:last-child):visible:not(:eq(0))"}},{"extend":"pdf","text":"PDF","exportOptions":{"columns":"th:not(:last-child):visible:not(:eq(0))"}},{"extend":"print","text":"Print","exportOptions":{"stripHtml":false,"columns":"th:not(:last-child):visible:not(:eq(0))"}}],"columnDefs":[{"width":"30px","targets":0,"searchable":false,"orderable":false,"visible":true},{"targets":1,"searchable":true,"orderable":true,"visible":true},{"targets":2,"searchable":true,"orderable":true,"visible":true},{"targets":3,"searchable":true,"orderable":true,"visible":true},{"targets":4,"searchable":true,"orderable":true,"visible":true},{"targets":5,"searchable":true,"orderable":true,"visible":true},{"targets":6,"searchable":true,"orderable":true,"visible":true},
+             // {"targets":7,"searchable":false,"orderable":false,"visible":true}
+             ],"responsive":true,"autoWidth":true}
              );
                 $('.toggle-vis').on('click', function (e) {
                     e.preventDefault();

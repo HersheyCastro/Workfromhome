@@ -1,6 +1,8 @@
 @extends('admin.layouts.master')
 @section('title', 'IPCR')
 @section('content')
+
+<!-- show division ipcr for senior -->
 <style type="text/css">
     table#t01 th {
       background-color: #3C8DBC;
@@ -25,10 +27,10 @@
 
     <div class="box box-danger">
         <div class="box-header with-border">
-            <h3 class="box-title"><i class="fa fa-list fa-fw"></i>IPCR List </h3>
+            <h3 class="box-title"><i class="fa fa-list fa-fw"></i>{{ $ipcr55->ipcr_name}} </h3>
         </div>
         <div class="box-body">
-           <form id="form-search" method="GET" action="{{route('admin.ipcr55.show',encrypt($ipcr55->id))}}">
+         <!--   <form id="form-search" method="GET" action="{{route('admin.ipcr55.show',encrypt($ipcr55->id))}}">
                     <nav class="navbar navbar-default">
                         <div class="container-fluid">
                             <div class="collapse navbar-collapse filter" id="bs-example-navbar-collapse-1">
@@ -46,9 +48,9 @@
                                        <div class="form-group">
                                             <label>Week</label>
                                             <div>
-                                                 <!-- {!! Form::select('fstatus55_id', $status55,  Input::get('fstatus55_id'), array('class'=>'form-control select2', 'width'=>'100' ,'disabled'=> isset($view) ? true : false)) !!} -->
+                                                 {!! Form::select('fstatus55_id', $status55,  Input::get('fstatus55_id'), array('class'=>'form-control select2', 'width'=>'100' ,'disabled'=> isset($view) ? true : false)) !!}
 
-                                                 <!-- <select class="form-control select2" name="month">
+                                                 <select class="form-control select2" name="month">
                                                       <option>January</option>
                                                       <option>February</option>
                                                       <option>March</option>
@@ -60,7 +62,7 @@
                                                       <option>Week 2</option>
                                                       <option>Week 3</option>
                                                       <option>Week 4</option>
-                                                 </select> -->
+                                                 </select>
 
                                                 <input type="week" name="targetweekform" class="form-control" value="" >
                                             </div>
@@ -78,7 +80,7 @@
                             </div>
                         </div>
                     </nav>
-                </form>
+                </form> -->
 
 
           <table id="t01" class="table table-hover table-responsive table-bordered" width="100%" >
@@ -216,6 +218,13 @@
                 <div class="col-md-12">
                     
 
+                    {!! Form::model($ipcr55, array('id' => 'form-with-validation', 'method' => 'PATCH', 'route' => array('admin'.'.updateStatus/', encrypt($ipcr55->id)))) !!}
+                   
+                    <input type="hidden" name="statusofipcr" value="revise">
+                    {!! Form::submit('Return for Revision', array('class' => 'btn btn-primary')) !!}
+                    
+                    {!! Form::close() !!}
+                    <br/>
                     {!! Form::model($ipcr55, array('id' => 'form-with-validation', 'method' => 'PATCH', 'route' => array('admin'.'.updateStatus/', encrypt($ipcr55->id)))) !!}
                    
                     <input type="hidden" name="statusofipcr" value="approve">

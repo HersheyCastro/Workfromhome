@@ -19,14 +19,13 @@
 
  
 
-    <div class="row">
-        <div class="col-md-12">
-
- <div class="box box-primary ">
-        <div class="box-header with-border">
+<div class="row">
+  <div class="col-md-12">
+    <div class="box box-primary ">
+      <div class="box-header with-border">
         <h3 class="box-title"><i class="fa fa-plus-circle fa-fw"></i>Add New Targets</h3>
-        </div>
-        <div class="box-body">
+      </div>
+      <div class="box-body">
          {!! Form::open(array('route' => 'admin'.'.targets55.store', 'id' => 'form-with-validation')) !!}
            <!--  <div class="form-group {{ $errors->has('successindicators55_id') ? 'is-invalid' : '' }}">
                 {!! Form::label('strategicObjectives_id', 'Strategic Objective', array('class'=>'control-label')) !!}
@@ -41,7 +40,6 @@
             </div> -->
             <div class="form-group {{ $errors->has('successindicators55_id') ? 'is-invalid' : '' }}">
              
-
                 {!! Form::label('successindicators55_id', 'Success Indicator', array('class'=>'control-label')) !!}
                         <span style="font-weight: 700; color: red">*</span>
                     {!! Form::select('successindicators55_id', $success, old('successindicators55_id'), array('class'=>'form-control select2', 'width'=>'100' ,'disabled'=> isset($view) ? true : false)) !!}
@@ -103,11 +101,7 @@
             <tr >
                 <td>
                     <div class="form-group {{ $errors->has('task_name') ? 'is-invalid' : '' }}">
-                     
-                       <!-- <input type="text" name="task_name[]" class="form-control" value="" required />  -->
-
                        <textarea rows="3" cols="80" name="task_name[]" class="form-control" required></textarea>
-                        
                     </div>
                 </td>
                 @if(Auth::user()->roles55_id=="4")
@@ -138,27 +132,7 @@
                             <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                           </div>
                     </div>
-
-                    
-
-                    
                 </td>
-                
-                <!-- <td>
-                    <div class="form-group {{ $errors->has('weight') ? 'is-invalid' : '' }}">
-                       
-                            <input type="number" name="weight[]" class="form-control" value="" /> 
-                            
-                    </div>
-                </td>
-                <td>
-                    <div class="form-group {{ $errors->has('percent_completed') ? 'is-invalid' : '' }}">
-                     
-                        <input type="number" name="percent_completed[]" class="form-control" value="" /> 
-                          
-                  </div>
-                  
-                </td> -->
                 <td>
                     <div class="form-group {{ $errors->has('means_verification') ? 'is-invalid' : '' }}">
                    
@@ -189,7 +163,7 @@
               </tr>
               
             
-        </table>
+          </table>
             <!-- targets -->
             <input type="hidden"  name="users55_id" value="{{ Auth::user()->employee_id }}">
             <input type="hidden"  name="ipcr55_id" value="{{$id}}">
@@ -259,21 +233,19 @@
                             @endif
                          @endforeach
                       </tbody>
-                  </table>
-                  <br/>
-                  <div id="addfile_toggle" style="border: 1px solid gray; padding: 10px;display: none">
-                    <label class="control-label">Add new attachment</label>
-                    <!-- <br/>
-                    <select name="taskFile" class="form-control">
-                      @foreach($tasks as $task)
-                        <option value="{{$task->id}}" >{{$task->name}}</option>
-                      @endforeach
-                    </select> -->
+                    </table>
                     <br/>
-                    <input type="file"  enctype="multipart/form-data" name="file[]" multiple="multiple">
-                  </div>
-                  
-                   
+                    <div id="addfile_toggle" style="border: 1px solid gray; padding: 10px;display: none">
+                      <label class="control-label">Add new attachment</label>
+                      <!-- <br/>
+                      <select name="taskFile" class="form-control">
+                        @foreach($tasks as $task)
+                          <option value="{{$task->id}}" >{{$task->name}}</option>
+                        @endforeach
+                      </select> -->
+                      <br/>
+                      <input type="file"  enctype="multipart/form-data" name="file[]" multiple="multiple">
+                    </div>
                   </div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

@@ -90,7 +90,7 @@
                           <div class="progress-bar progress-bar-success progress-bar-striped active" aria-valuenow="{{ $task->percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ $task->percent_completed }}%;">{{$task->percent_completed}}%</div>
                         </td>
                     <td>
-                        <textarea rows="2" cols="50" name="evaluation[]">{{$task->chief_accomplishmentremarks}}</textarea>
+                        <textarea rows="2" cols="50" name="evaluation[]">{{$task->senior_accomplishmentremarks}}</textarea>
                     </td>
                     
                    

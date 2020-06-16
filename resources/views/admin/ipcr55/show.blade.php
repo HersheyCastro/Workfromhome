@@ -27,10 +27,10 @@
 
     <div class="box box-danger">
         <div class="box-header with-border">
-            <h3 class="box-title"><i class="fa fa-list fa-fw"></i>IPCR Targets (workplan )</h3>
+            <h3 class="box-title"><i class="fa fa-list fa-fw"></i>{{ $ipcr55->ipcr_name }}</h3>
         </div>
         <div class="box-body">
-           <form id="form-search" method="GET" action="{{route('admin.ipcr55.show',encrypt($ipcr55->id))}}">
+          <!--  <form id="form-search" method="GET" action="{{route('admin.ipcr55.show',encrypt($ipcr55->id))}}">
                     <nav class="navbar navbar-default">
                         <div class="container-fluid">
                             <div class="collapse navbar-collapse filter" id="bs-example-navbar-collapse-1">
@@ -48,9 +48,9 @@
                                        <div class="form-group">
                                             <label>Week</label>
                                             <div>
-                                                 <!-- {!! Form::select('fstatus55_id', $status55,  Input::get('fstatus55_id'), array('class'=>'form-control select2', 'width'=>'100' ,'disabled'=> isset($view) ? true : false)) !!} -->
+                                                 {!! Form::select('fstatus55_id', $status55,  Input::get('fstatus55_id'), array('class'=>'form-control select2', 'width'=>'100' ,'disabled'=> isset($view) ? true : false)) !!}
 
-                                                 <!-- <select class="form-control select2" name="month">
+                                                 <select class="form-control select2" name="month">
                                                       <option>January</option>
                                                       <option>February</option>
                                                       <option>March</option>
@@ -62,7 +62,7 @@
                                                       <option>Week 2</option>
                                                       <option>Week 3</option>
                                                       <option>Week 4</option>
-                                                 </select> -->
+                                                 </select>
 
                                                 <input type="week" name="targetweekform" class="form-control" value="" >
                                             </div>
@@ -80,7 +80,7 @@
                             </div>
                         </div>
                     </nav>
-            </form>
+            </form> -->
 
            <button type="button" type="button" onclick="location.href ='{{ route('admin'.'.printIPCR',$ipcr55->id) }}'"class="btn btn-primary">Print IPCR Targets</button>
           <table id="t01" class="table table-hover table-responsive table-bordered" width="100%" >
@@ -94,11 +94,11 @@
               <th width="10%">Means of Verification</th>
               <th width="10%">Remarks (from Senior)</th>
               <th width="10%">Remarks (from Division Chief)</th>
+              @if(($ipcr55->status55_id=="3") || ($ipcr55->status55_id=="5"))
               <th>
-                
-                  <button type="button" onclick="location.href ='{{ route('admin'.'.targets55.create') }}/{{$ipcr55->id}}'" class="btn btn-default btn-sm fa fa-plus"></button>
-             
+               <button type="button" onclick="location.href ='{{ route('admin'.'.targets55.create') }}/{{$ipcr55->id}}'" class="btn btn-default btn-sm fa fa-plus"></button>
               </th>
+              @endif
             </tr>
            
           @php($old_so="")
@@ -134,15 +134,13 @@
                         <td>{{$task->verification}}</td>
                         <td>{{$task->evaluation}}</td>
                         <td>{{$task->evaluation_divhead}}</td>
+                        @if(($ipcr55->status55_id=="3") || ($ipcr55->status55_id=="5"))
                         @if(!$counter)
                          <td rowspan="{{$tasks->where('targets_id', $target->id)->count() ?? '1'}}">
-
-                          
-                              <button type="button" onclick="location.href ='{{ route('admin'.'.targets55.edit',$target->id) }}'" class="btn btn-default btn-sm fa fa-pencil-square-o"></button><button type="button" class="btn btn-default btn-sm fa fa-minus" data-toggle="modal" id="{{encrypt($target->id)}}" data-route="{{route('admin'.'.targets55.destroy', encrypt($target->id))}}" data-target="#mDeleteTargets55DataTable"></button> 
-                         
+                            <button type="button" onclick="location.href ='{{ route('admin'.'.targets55.edit',$target->id) }}'" class="btn btn-default btn-sm fa fa-pencil-square-o"></button><button type="button" class="btn btn-default btn-sm fa fa-minus" data-toggle="modal" id="{{encrypt($target->id)}}" data-route="{{route('admin'.'.targets55.destroy', encrypt($target->id))}}" data-target="#mDeleteTargets55DataTable"></button>
                           </td>
                         @endif
-                          
+                        @endif
                                
 
                               
@@ -236,7 +234,7 @@
                 <div class="col-md-12">
                   {!! Form::model($ipcr55, array('id' => 'form-with-validation', 'method' => 'PATCH', 'route' => array('admin'.'.updateStatus/', encrypt($id)))) !!}
                    
-
+                  @if( $ipcr55->status55_id==3 || $ipcr55->status55_id==5)
                     @if((Auth::user()->roles55_id=="1") || (Auth::user()->roles55_id=="3") ) 
                       <input type="hidden" name="statusofipcr" value="verification">
                       {!! Form::submit('Submit for Verification', array('class' => 'btn btn-primary')) !!}
@@ -247,6 +245,7 @@
                       <input type="hidden" name="statusofipcr" value="submission">
                       {!! Form::submit('For Submission', array('class' => 'btn btn-primary')) !!}
                     @endif
+                   @endif
 
 
                     <a href="{{URL::previous()}}" class="btn btn-default">Back</a>

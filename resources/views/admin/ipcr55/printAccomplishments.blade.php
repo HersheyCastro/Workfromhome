@@ -19,10 +19,6 @@ td, th {
   
 }
 
-.page-break {
-    page-break-after: always;
-}
-
 
 </style>
   </head>
@@ -50,7 +46,7 @@ td, th {
             <td style="width: 25.0000%;"><span style="font-family: Arial,Helvetica,sans-serif;"><span style="font-size: 12px;"></span></span></td>
         </tr>
     </tbody>
-    </table >
+    </table>
     <table id="t01" class="table table-hover table-responsive table-bordered" width="100%" >
             <tr>
               <th width="15%">Major Final Output</th>
@@ -73,7 +69,7 @@ td, th {
                 @foreach($tasks->where('targets_id', $target->id) as $task_index => $task)
                   @foreach($successindicators55->where('id',$target->successindicators55_id) as $si)
                     @foreach($strategicobjectives->where('id',$si->strategicobjectives55_id) as $so )
-                      <tr >
+                      <tr>
                         @if(!$counter)
 
                           @if($old_so!=$so->id)
@@ -87,15 +83,15 @@ td, th {
                           @php($old_si = $si->id)
                           @endif
                           
-                          <td class="page-break" rowspan="{{$tasks->where('targets_id', $target->id)->count() ?? '1'}}" style="">{!! $target->name !!}</td>
+                          <td  rowspan="{{$tasks->where('targets_id', $target->id)->count() ?? '1'}}" style="">{!! $target->name !!}({{$target->percent}}%)</td>
                         @endif
 
                         <td>{{$task->tasks}}</td>
                         @if(!$counter)
-                            <td rowspan="{{$tasks->where('targets_id', $target->id)->count() ?? '1'}}"></td>
-                            <td rowspan="{{$tasks->where('targets_id', $target->id)->count() ?? '1'}}"></td>
-                            <td rowspan="{{$tasks->where('targets_id', $target->id)->count() ?? '1'}}"></td>
-                            <td rowspan="{{$tasks->where('targets_id', $target->id)->count() ?? '1'}}"></td>
+                            <td rowspan="{{$tasks->where('targets_id', $target->id)->count() ?? '1'}}">{{ $target->efficiency }}</td>
+                            <td rowspan="{{$tasks->where('targets_id', $target->id)->count() ?? '1'}}">{{ $target->quality }}</td>
+                            <td rowspan="{{$tasks->where('targets_id', $target->id)->count() ?? '1'}}">{{ $target->timeliness }}</td>
+                            <td rowspan="{{$tasks->where('targets_id', $target->id)->count() ?? '1'}}">{{ $target->eqt_ave }}</td>
                             <td rowspan="{{$tasks->where('targets_id', $target->id)->count() ?? '1'}}"></td>
                         @endif
                       

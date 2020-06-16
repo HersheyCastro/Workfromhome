@@ -21,72 +21,31 @@
                                 <strong>{{ $errors->first('ipcr_name') }}</strong>
                                 </span>
                             @endif
-                            
                     </div>
                     <div class="form-group {{ $errors->has('semester') ? 'is-invalid' : '' }}">
                         {!! Form::label('semester', 'Semester', array('class'=>'control-label')) !!}
                             <span style="font-weight: 700; color: red">*</span>
-                            <!-- {!! Form::number('semester', old('semester',$ipcr55->semester), array('class'=>'form-control','disabled'=> isset($view) ? true : false)) !!}
-                             @if ($errors->has('semester'))
-                                 <span class="invalid-feedback">
-                                 <strong>{{ $errors->first('semester') }}</strong>
-                                 </span>
-                             @endif -->
-
+                          
                         <select name="semester" class="form-control">
-                          <option value="1" >1st Semester</option>
-                          <option value="2" >2nd Semester</option>
+                          <option value="1" @if($ipcr55->semester==1) selected @endif >1st Semester</option>
+                          <option value="2" @if($ipcr55->semester==2) selected @endif >2nd Semester</option>
                         </select>
                         @if ($errors->has('semester'))
                              <span class="invalid-feedback">
                              <strong>{{ $errors->first('semester') }}</strong>
                              </span>
                          @endif
-                            
-
                     </div>
                     <div class="form-group {{ $errors->has('year') ? 'is-invalid' : '' }}">
                         {!! Form::label('year', 'Year', array('class'=>'control-label')) !!}
-                            <span style="font-weight: 700; color: red">*</span>
-                           <!--  {!! Form::number('year', old('year',$ipcr55->year), array('class'=>'form-control','disabled'=> isset($view) ? true : false)) !!}
-                             @if ($errors->has('year'))
-                                 <span class="invalid-feedback">
-                                 <strong>{{ $errors->first('year') }}</strong>
-                                 </span>
-                             @endif -->
-
+                        <span style="font-weight: 700; color: red">*</span>
                         <select name="year" class="form-control">
-                          <option value="2020" >2020</option>
-                          <option value="2019" >2019</option>
-                          <option value="2018" >2018</option>
-                          <option value="2017" >2017</option>
-                          <option value="2018" >2019</option>
+                          <option value="2020" @if($ipcr55->year==2020) selected @endif >2020</option>
+                          <option value="2019" @if($ipcr55->year==2019) selected @endif  >2019</option>
+                          <option value="2018" @if($ipcr55->year==2018) selected @endif >2018</option>
+                          <option value="2017" @if($ipcr55->year==2017) selected @endif >2017</option>
+                          <option value="2016" @if($ipcr55->year==2016) selected @endif >2016</option>
                         </select>
-                            
-
-                    </div>
-                    <!-- <div class="form-group {{ $errors->has('status55_id') ? 'is-invalid' : '' }}">
-                        {!! Form::label('status55_id', 'Status', array('class'=>'control-label')) !!}
-                                
-                            {!! Form::select('status55_id', $status55, old('status55_id',$ipcr55->status55_id), array('class'=>'form-control select2', 'width'=>'100' ,'disabled'=> isset($view) ? true : false)) !!}
-                            @if ($errors->has('status55_id'))
-                                 <span class="invalid-feedback">
-                                 <strong>{{ $errors->first('status55_id') }}</strong>
-                                 </span>
-                             @endif
-                            
-                    </div> -->
-                    <div class="form-group {{ $errors->has('created_by') ? 'is-invalid' : '' }}">
-                       <!--  {!! Form::label('created_by', 'Created By', array('class'=>'control-label')) !!}
-                            
-                            {!! Form::number('created_by', old('created_by',$ipcr55->created_by), array('class'=>'form-control','disabled'=> isset($view) ? true : false)) !!}
-                             @if ($errors->has('created_by'))
-                                 <span class="invalid-feedback">
-                                 <strong>{{ $errors->first('created_by') }}</strong>
-                                 </span>
-                             @endif -->
-                            
-
                     </div>
                     <div class="form-group">
                         {!! Form::label('active', 'Active', array('class'=>'control-label')) !!}

@@ -83,11 +83,25 @@
                  <th width="10%">% Accomplished</th>
                 <th width="10%">Actual Period</th>
                 <th width="30%">Actual verification</th>
-                <th><button type="button" class="btn btn-default btn-sm fa fa-plus add_another"></button></th>
-               
+                @if( is_null($ipcr55->origid) )
+                  <th><button type="button" class="btn btn-default btn-sm fa fa-plus add_another"></button></th>
+                @endif
               </tr>
               @foreach($tasks as $task)
                 <tr >
+                    
+                  @if( $ipcr55->status55_id == 13)
+                    <td>
+                      <input type="text" name="target_start[]" class="form-control" value=" {{ \Carbon\Carbon::parse($task->duration_s)->format('d/m/Y')}}" >
+
+                      <input type="text" name="target_end[]" class="form-control" value="{{ \Carbon\Carbon::parse($task->duration_e)->format('d/m/Y')}}" >
+                    </td>
+                    <td>
+                        <div class="form-group {{ $errors->has('task_accomplishments') ? 'is-invalid' : '' }}" >
+                          <input type="text" name="task_accomplishments[]" class="form-control" value="{{$task->name}}"  />
+                        </div>
+                    </td>
+                  @else
                     <td>
                       <input type="text" name="target_start[]" class="form-control" value=" {{ \Carbon\Carbon::parse($task->duration_s)->format('d/m/Y')}}" readonly="readonly">
 
@@ -98,9 +112,10 @@
                           <input type="text" name="task_accomplishments[]" class="form-control" value="{{$task->name}}" readonly="readonly" />
                         </div>
                     </td>
+                  @endif
                     <td>
                         <div class="form-group {{ $errors->has('percent_completed') ? 'is-invalid' : '' }}">
-                          <input type="number" name="percent_completed[]" class="form-control" value="{{$task->percent_completed}}" /> 
+                          <input type="number" name="percent_completed[]" class="form-control" value="{{$task->percent_completed}}"  /> 
                          </div>
                     </td>
                     <td>
@@ -122,7 +137,9 @@
                     <td>
                         <textarea class="form-control mceEditor2" name="actual_verification[]">{!! $task->actual_verification !!}</textarea>
                     </td>
-                    <td></td>
+                    @if( is_null($ipcr55->origid) )
+                      <td></td>
+                    @endif
                   </tr>
                   <input type="hidden"  name="task_id[]" value="{{ $task->id}}">
                   <input type="hidden"  name="weight[]" value="{{ $task->weight}}">

@@ -25,10 +25,10 @@
 
     <div class="box box-danger">
         <div class="box-header with-border">
-            <h3 class="box-title"><i class="fa fa-list fa-fw"></i>Verify Accomplishments</h3>
+            <h3 class="box-title"><i class="fa fa-list fa-fw"></i>{{$ipcr55->ipcr_name}}</h3>
         </div>
         <div class="box-body">
-           <form id="form-search" method="GET" action="{{route('admin.ipcr55.show',encrypt($ipcr55->id))}}">
+          <!--  <form id="form-search" method="GET" action="{{route('admin.ipcr55.show',encrypt($ipcr55->id))}}">
                     <nav class="navbar navbar-default">
                         <div class="container-fluid">
                             <div class="collapse navbar-collapse filter" id="bs-example-navbar-collapse-1">
@@ -46,9 +46,9 @@
                                        <div class="form-group">
                                             <label>Week</label>
                                             <div>
-                                                 <!-- {!! Form::select('fstatus55_id', $status55,  Input::get('fstatus55_id'), array('class'=>'form-control select2', 'width'=>'100' ,'disabled'=> isset($view) ? true : false)) !!} -->
+                                                 {!! Form::select('fstatus55_id', $status55,  Input::get('fstatus55_id'), array('class'=>'form-control select2', 'width'=>'100' ,'disabled'=> isset($view) ? true : false)) !!}
 
-                                                 <!-- <select class="form-control select2" name="month">
+                                                 <select class="form-control select2" name="month">
                                                       <option>January</option>
                                                       <option>February</option>
                                                       <option>March</option>
@@ -60,7 +60,7 @@
                                                       <option>Week 2</option>
                                                       <option>Week 3</option>
                                                       <option>Week 4</option>
-                                                 </select> -->
+                                                 </select>
 
                                                 <input type="week" name="targetweekform" class="form-control" value="" >
                                             </div>
@@ -78,7 +78,7 @@
                             </div>
                         </div>
                     </nav>
-            </form>
+            </form> -->
 
 
           <table id="t01" class="table table-hover table-responsive table-bordered" width="100%" >
@@ -89,6 +89,10 @@
               <th width="15%">Tasks</th>
               <th width="10%">Weight</th>
               <th width="15%">%Accomplished</th>
+               <th width="15%">Efficiency</th>
+              <th width="15%">Quality</th>
+              <th width="15%">Timeliness</th>
+              <th width="15%">Average</th>
               <th width="15%">Actual Verification</th>
               <th width="15%">Remarks (from senior)</th>
               <th width="15%">Remarks (from Division Chief)</th>
@@ -130,6 +134,12 @@
                          <td>
                           <div class="progress-bar progress-bar-success progress-bar-striped active" aria-valuenow="{{ $task->percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ $task->percent }}%;">{{$task->percent}}%</div>
                         </td>
+                         @if(!$counter)
+                          <td rowspan="{{$tasks->where('targets_id', $target->id)->count() ?? '1'}}">{{$target->efficiency}}%</td>
+                          <td rowspan="{{$tasks->where('targets_id', $target->id)->count() ?? '1'}}">{{$target->quality}}%</td>
+                          <td rowspan="{{$tasks->where('targets_id', $target->id)->count() ?? '1'}}">{{$target->timeliness}}%</td>
+                          <td rowspan="{{$tasks->where('targets_id', $target->id)->count() ?? '1'}}">{{$target->eqt_ave}}%</td>
+                        @endif
                         <td>{!! $task->actual_verification !!}</td>
                        
                         <td>{{$task->senior_accomplishmentremarks}}</td>
@@ -245,9 +255,19 @@
         <div class="box-footer">
             <div class="row">
                 <div class="col-md-12">
+                   {!! Form::model($ipcr55, array('id' => 'form-with-validation', 'method' => 'PATCH', 'route' => array('admin'.'.updatetaskStatus/', encrypt($ipcr55->id)))) !!}
+                   
+                    @if(is_null($ipcr55->origid))
+                      <input type="hidden" name="statusofipcr" value="reviseaccomplishment">
+                    @else
+                      <input type="hidden" name="statusofipcr" value="reviseadditional">
+                    @endif
+                    {!! Form::submit('Return for Revision', array('class' => 'btn btn-primary')) !!}
+                  {!! Form::close() !!}
+                  <br/>
                   {!! Form::model($ipcr55, array('id' => 'form-with-validation', 'method' => 'PATCH', 'route' => array('admin'.'.updatetaskStatus/', encrypt($ipcr55->id)))) !!}
                    
-                    <input type="hidden" name="statusofipcr" value="approve">
+                    <input type="hidden" name="statusofipcr" value="completed">
                     {!! Form::submit('Approve', array('class' => 'btn btn-primary')) !!}
                     <a href="{{URL::previous()}}" class="btn btn-default">Back</a>
                   {!! Form::close() !!}

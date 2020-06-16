@@ -25,10 +25,10 @@
 
     <div class="box box-danger">
         <div class="box-header with-border">
-            <h3 class="box-title"><i class="fa fa-list fa-fw"></i>Accomplishments</h3>
+            <h3 class="box-title"><i class="fa fa-list fa-fw"></i>{{ $ipcr55->ipcr_name }}</h3>
         </div>
         <div class="box-body">
-           <form id="form-search" method="GET" action="{{route('admin.ipcr55.show',encrypt($ipcr55->id))}}">
+           <!-- <form id="form-search" method="GET" action="{{route('admin.ipcr55.show',encrypt($ipcr55->id))}}">
                     <nav class="navbar navbar-default">
                         <div class="container-fluid">
                             <div class="collapse navbar-collapse filter" id="bs-example-navbar-collapse-1">
@@ -46,9 +46,9 @@
                                        <div class="form-group">
                                             <label>Week</label>
                                             <div>
-                                                 <!-- {!! Form::select('fstatus55_id', $status55,  Input::get('fstatus55_id'), array('class'=>'form-control select2', 'width'=>'100' ,'disabled'=> isset($view) ? true : false)) !!} -->
+                                                 {!! Form::select('fstatus55_id', $status55,  Input::get('fstatus55_id'), array('class'=>'form-control select2', 'width'=>'100' ,'disabled'=> isset($view) ? true : false)) !!}
 
-                                                 <!-- <select class="form-control select2" name="month">
+                                                 <select class="form-control select2" name="month">
                                                       <option>January</option>
                                                       <option>February</option>
                                                       <option>March</option>
@@ -60,7 +60,7 @@
                                                       <option>Week 2</option>
                                                       <option>Week 3</option>
                                                       <option>Week 4</option>
-                                                 </select> -->
+                                                 </select>
 
                                                 <input type="week" name="targetweekform" class="form-control" value="" >
                                             </div>
@@ -79,8 +79,8 @@
                         </div>
                     </nav>
             </form>
-
-
+ -->
+           <button type="button" type="button" onclick="location.href ='{{ route('admin'.'.printAccomplishments',$ipcr55->id) }}'"class="btn btn-primary">Print Accomplishments</button>
           <table id="t01" class="table table-hover table-responsive table-bordered" width="100%" >
             <tr>
               <th width="15%">Strategic Objective</th>
@@ -96,18 +96,21 @@
               <th width="15%">Timeliness</th>
               <th width="15%">Average</th>
               <th width="15%">Actual Verification</th>
+              <th width="15%">Remarks from Senior</th>
+              <th width="15%">Remarks from Division Chief</th>
               <!-- <th>Evaluation/Remarks from Supervisor</th> -->
-              
+             
               <th>
+               @if( (is_null($ipcr55->origid)) && ($ipcr55->status55_id!=7) && ($ipcr55->status55_id!=8) && ($ipcr55->status55_id!=11))
                 @if(Auth::user()->roles55_id=="4" )
                 <button type="button" onclick="location.href ='{{ route('admin'.'.additionaldivisionaccomplishments',$ipcr55->id) }}'" class="btn btn-default btn-sm fa fa-plus"></button>
                 @else
-                 <button type="button" onclick="location.href ='{{ route('admin'.'.createaccomplishments',$ipcr55->id) }}'" class="btn btn-default btn-sm fa fa-plus"></button>
+                    <button type="button" onclick="location.href ='{{ route('admin'.'.createaccomplishments',$ipcr55->id) }}'" class="btn btn-default btn-sm fa fa-plus"></button>
                 @endif
-                 
-                
-                
+               @endif
               </th>
+             
+             
             </tr>
            
           @php($old_so="")
@@ -153,22 +156,22 @@
                           <!--  <a  href="{{asset ('http://10.10.115.25/accomplishments/uploads/files/')}}{{ $task->actual_verification}}" target="_blank">{{$task->actual_verification}}  </a> -->
                           {!! $task->actual_verification !!} 
                         </td>
+                        <td>{{ $task->senior_accomplishmentremarks}}</td>
+                        <td>{{ $task->chief_accomplishmentremarks}}</td>
                         <!-- <td>{{$task->evaluation}}</td> -->
-
-                        @if(!$counter)
                         
+                        @if(!$counter)           
                           <td rowspan="{{$tasks->where('targets_id', $target->id)->count() ?? '1'}}">
-
-                            @if(Auth::user()->roles55_id=="4" )
-                            <button type="button" onclick="location.href ='{{ route('admin'.'.editadditionalaccomplishmentsforchief',$target->id) }}'" class="btn btn-default btn-sm fa fa-pencil-square-o"></button>
-                            @else
-                              <button type="button" onclick="location.href ='{{ route('admin'.'.editaccomplishments',$target->id) }}'" class="btn btn-default btn-sm fa fa-pencil-square-o"></button>
+                            @if(($ipcr55->status55_id==2) || ($ipcr55->status55_id==10) || ($ipcr55->status55_id==13))
+                              @if(Auth::user()->roles55_id=="4" )
+                              <button type="button" onclick="location.href ='{{ route('admin'.'.editadditionalaccomplishmentsforchief',$target->id) }}'" class="btn btn-default btn-sm fa fa-pencil-square-o"></button>
+                              @else
+                                <button type="button" onclick="location.href ='{{ route('admin'.'.editaccomplishments',$target->id) }}'" class="btn btn-default btn-sm fa fa-pencil-square-o"></button>
+                              @endif
                             @endif
-                            
-                              
-                              
                           </td>
-                          @endif
+                        @endif
+                        
 
                           <!-- @if( (Auth::user()->roles55_id!="3") && (Auth::user()->roles55_id!="1"))
                               {!! Form::model($tasks, array('id' => 'form-with-validation', 'method' => 'PATCH', 'route' => array('admin'.'.tasks55.update', encrypt($task->tasks_id)))) !!}
@@ -273,31 +276,27 @@
                 <div class="col-md-12">
                      {!! Form::model($ipcr55, array('id' => 'form-with-validation', 'method' => 'PATCH', 'route' => array('admin'.'.verifyaccomplishment/',encrypt($ipcr55->id)))) !!}
 
-                     <div class="col-sm-4">
-                      
-                        <label>Week</label>
+                   
+                    @if(($checkadditional == 0) && (is_null($ipcr55->origid)) && ($ipcr55->status55_id !=  8) && ($ipcr55->status55_id !=  11) || ($ipcr55->status55_id ==  13) || ($ipcr55->status55_id ==  10))
+                      @if((Auth::user()->roles55_id=="1") || (Auth::user()->roles55_id=="3") ) 
+                        @if(is_null($ipcr55->origid))
+                          <input type="hidden" name="statusofipcr" value="verifyaccomplishment">
+                        @else
+                          <input type="hidden" name="statusofipcr" value="verifyadditional">
+                        @endif
+                        {!! Form::submit('Submit for Verification', array('class' => 'btn btn-primary')) !!}
+                      @elseif(Auth::user()->roles55_id=="7")
+                        @if(is_null($ipcr55->origid))
+                          <input type="hidden" name="statusofipcr" value="approvalaccomplishment">
+                        @else
+                          <input type="hidden" name="statusofipcr" value="approvaladditional">
+                        @endif
                         
-                            
-                            <input type="week" name="targetweekform" class="form-control" value="" >
-                          
-                   
-                    </div>
-                    <br/>
-                    <br/>
-                    <br/>
-                    <br/>
-
-                   
-
-                    @if((Auth::user()->roles55_id=="1") || (Auth::user()->roles55_id=="3") ) 
-                      <input type="hidden" name="statusofipcr" value="verification">
-                      {!! Form::submit('Submit for Verification', array('class' => 'btn btn-primary')) !!}
-                    @elseif(Auth::user()->roles55_id=="7")
-                      <input type="hidden" name="statusofipcr" value="approval">
-                      {!! Form::submit('Submit for Approval', array('class' => 'btn btn-primary')) !!}
-                    @elseif(Auth::user()->roles55_id=="4")
-                      <input type="hidden" name="statusofipcr" value="submission">
-                      {!! Form::submit('For Submission', array('class' => 'btn btn-primary')) !!}
+                        {!! Form::submit('Submit for Approval', array('class' => 'btn btn-primary')) !!}
+                      @elseif(Auth::user()->roles55_id=="4")
+                        <input type="hidden" name="statusofipcr" value="submission">
+                        {!! Form::submit('For Submission', array('class' => 'btn btn-primary')) !!}
+                      @endif
                     @endif
 
                     

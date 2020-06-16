@@ -24,6 +24,7 @@ use App\Http\Requests\UpdateTargets55Request;
 use App\Users55;
 use App\SuccessIndicators55;
 use App\Tasks55;
+use App\Division55;
 use DB;
 use App\StrategicObjectives55;
 use App\Ipcr_users;
@@ -42,75 +43,169 @@ class Ipcr55Controller extends Controller {
      *
      * @return \Illuminate\View\View
 	 */
-	public function indexdivision(Request $request)
+	public function index(Request $request)
     {
-    	// return "hi";
-    		if(!Guard::allows('ipcr55_access')){
+    	if(!Guard::allows('ipcr55_access')){
     		return abort(404);
     	}
-    
-    	$division_id = Auth::user()->division_id;
-    	$mytime = Carbon::now();
-		$ddate =$mytime;
-		$date = new DateTime($ddate);
-		$week = $date->format("W");
+		$ipcr55 = Ipcr55::where([
+				       'user_id' => Auth::user()->id,
+				       'origid' => NULL,
+				      
+				])->get();
 
-    	if(Auth::user()->roles55_id=="6"){
-        	
+  
+		if(Input::has('fstatus55_id')) { //relationship
+		    $status55_data =  Input::get('fstatus55_id');
 
-        	$ipcr55= DB::select("SELECT DISTINCT 
-								I1.id as id,
-                                I1.ipcr_name as ipcr_name,
-								I1.semester as semester,
-								I1.year as year,
-								I1.updated_at as updated_at,
-								I1.active as active,
-								I1.created_at as created_at,
-								I5.status_name as status_name
-								FROM ipcr55 I1 LEFT JOIN users55 I2 ON I1.user_id = I2.id 
-								LEFT JOIN targets55 I3 ON I3.ipcr55_id = I1.id
-								LEFT JOIN tasks55 I4 ON I4.targets55_id = I3.id 
-								LEFT JOIN status55 I5 ON  I1.status55_id = I5.id
-								WHERE I1.status55_id = 6 and I2.roles55_id = 4 and I3.deleted_at IS NULL");
-        }elseif(Auth::user()->roles55_id=="4") {
+		    if(!$status55_data == ''){
+		        $ipcr55 = $ipcr55->whereHas('status55', function ($query) use($status55_data)  {
+		            return $query->where('status55_id', $status55_data);
+		        });
+		    }
 
-        	$ipcr55= DB::select("SELECT DISTINCT 
-								I1.id as id,
-                                I1.ipcr_name as ipcr_name,
-								I1.semester as semester,
-								I1.year as year,
-								I1.updated_at as updated_at,
-								I1.active as active,
-								I1.created_at as created_at,
-								I5.status_name as status_name
-								FROM ipcr55 I1 LEFT JOIN users55 I2 ON I1.user_id = I2.id 
-								LEFT JOIN targets55 I3 ON I3.ipcr55_id = I1.id
-								LEFT JOIN tasks55 I4 ON I4.targets55_id = I3.id 
-								LEFT JOIN status55 I5 ON  I1.status55_id = I5.id
-								WHERE I2.division_id = $division_id  and I1.status55_id = 1 and I2.roles55_id != 4 and I3.deleted_at IS NULL");
+		}
 
-        }elseif(Auth::user()->roles55_id=="7"){
-        	$ipcr55= DB::select("SELECT DISTINCT 
-								I1.id as id,
-                                I1.ipcr_name as ipcr_name,
-								I1.semester as semester,
-								I1.year as year,
-								I1.updated_at as updated_at,
-								I1.active as active,
-								I1.created_at as created_at,
-								I5.status_name as status_name
-								FROM ipcr55 I1 LEFT JOIN users55 I2 ON I1.user_id = I2.id 
-								LEFT JOIN targets55 I3 ON I3.ipcr55_id = I1.id
-								LEFT JOIN tasks55 I4 ON I4.targets55_id = I3.id 
-								LEFT JOIN status55 I5 ON  I1.status55_id = I5.id
-								WHERE I2.division_id = $division_id  and I1.status55_id = 4 and I2.roles55_id != 4 and I2.roles55_id != 7 and I3.deleted_at IS NULL");
+        ///filter fields
+        $status55 = Status55::pluck("status_name", "id");
 
-        }
+        // if(Auth::user()->roles55_id=="4" || Auth::user()->roles55_id=="6"){
+        // 	return view('admin.ipcr55.ipcrIndex', compact('ipcr55', "status55"));
+        // }
+		return view('admin.ipcr55.index', compact('ipcr55', "status55"));
+	}
 
-    	
+	public function show($id,Request $request)
+	{
+		
+		if(!Guard::allows('ipcr55_view')){
+			return abort(404);
+		}
+		if(!Guard::allows('targets55_create')){
+			return abort(404);
+		}
+	    $users55 = Users55::pluck("firstname", "id");
+		$successindicators55 = SuccessIndicators55::all();
+		$strategicobjectives = StrategicObjectives55::all();
+		$ipcr55 = Ipcr55::find(decrypt($id));
+		$status55 = Status55::pluck("status_name", "id");
+		$targets = Targets55::where('ipcr55_id',decrypt($id))->orderBy('successindicators55_id')->get();
+		//IPCR ID
+		$id = decrypt($id);
+			
+		$tasks =DB::select("SELECT  
+							T4.strategicobjectives55_id as SO,
+							T1.successindicators55_id as SI,
+							T1.name as targets,
+							T1.id as targets_id,
+							T2.id as tasks_id,
+							T2.name as tasks,
+							T2.weight as weight,
+							T2.percent_completed as percent,
+							T2.means_verification as verification,
+							T2.evaluation as evaluation,
+							T3.id as ipcr_id,
+							T2.active as week,
+							T5.strategic_objective_name as SOname,
+							T4.success_indicator_name as SIname,
+							T2.evaluation_divhead as evaluation_divhead
+							FROM tasks55 T2 LEFT JOIN targets55 T1 ON T1.id = T2.targets55_id 
+							LEFT JOIN ipcr55 T3 ON T1.ipcr55_id = T3.id
+							LEFT JOIN successindicators55 T4 ON T1.successindicators55_id = T4.id
+							LEFT JOIN strategicobjectives55 T5 ON T4.strategicobjectives55_id = T5.id
+							WHERE T1.ipcr55_id = $id and T2.deleted_at IS NULL and T1.deleted_at IS NULL order by SO, SI, targets
+							");
+		$tasks = collect($tasks);
+		
 
-       
-       // return $ipcr55;
+		$rowSOcount = DB::select("select count(so) as so_count, so as so_id from (SELECT  
+							T4.strategicobjectives55_id as SO,
+							T1.successindicators55_id as SI,
+							T1.name as targets,
+							T1.id as targets_id,
+							T2.id as tasks_id,
+							T2.name as tasks,
+							T2.weight as weight,
+							T2.percent_completed as percent,
+							T2.means_verification as verification,
+							T2.evaluation as evaluation,
+							T3.id as ipcr_id,
+							T2.active as week,
+							T2.evaluation_divhead as evaluation_divhead
+							FROM tasks55 T2 LEFT JOIN targets55 T1 ON T1.id = T2.targets55_id 
+							LEFT JOIN ipcr55 T3 ON T1.ipcr55_id = T3.id
+							LEFT JOIN successindicators55 T4 ON T1.successindicators55_id = T4.id
+							WHERE T1.ipcr55_id = $id and T2.deleted_at IS NULL and T1.deleted_at IS NULL order by SO, SI, targets) ipcrtable group by SO
+							");
+
+		$rowSOcount = collect($rowSOcount);
+
+		if($rowSOcount->count()==0){
+			$so_row=0;
+		}
+
+		foreach($rowSOcount as $rowso) {
+			$so_row[$rowso->so_id] = $rowso->so_count;
+		}
+
+		$rowSIcount = DB::select("select count(SI) as si_count, SI as si_id from (SELECT  
+							T4.strategicobjectives55_id as SO,
+							T1.successindicators55_id as SI,
+							T1.name as targets,
+							T1.id as targets_id,
+							T2.id as tasks_id,
+							T2.name as tasks,
+							T2.weight as weight,
+							T2.percent_completed as percent,
+							T2.means_verification as verification,
+							T2.evaluation as evaluation,
+							T3.id as ipcr_id,
+							T2.active as week,
+							T2.evaluation_divhead as evaluation_divhead
+							FROM tasks55 T2 LEFT JOIN targets55 T1 ON T1.id = T2.targets55_id 
+							LEFT JOIN ipcr55 T3 ON T1.ipcr55_id = T3.id
+							LEFT JOIN successindicators55 T4 ON T1.successindicators55_id = T4.id
+							WHERE T1.ipcr55_id = $id and T2.deleted_at IS NULL and T1.deleted_at IS NULL order by SO, SI, targets) ipcrtable group by SI
+							");
+
+
+
+		$rowSIcount = collect($rowSIcount);
+
+		if($rowSIcount->count()==0){
+			$si_row=0;
+		}
+
+		foreach($rowSIcount as $rowsi) {
+			$si_row[$rowsi->si_id] = $rowsi->si_count;
+		}
+		return view('admin.ipcr55.show', compact('ipcr55', "status55","users55","successindicators55","targets","tasks","strategicobjectives","so_row","si_row","id"));
+	}
+
+	public function edit($id)
+	{
+		if(!Guard::allows('ipcr55_edit')){
+   			return abort(404);
+   		}
+		$ipcr55 = Ipcr55::find(decrypt($id));
+	    
+		return view('admin.ipcr55.edit', compact('ipcr55'));
+	}
+
+	public function indexaccomplishments(Request $request)
+    {
+    	if(!Guard::allows('ipcr55_access')){
+    		return abort(404);
+    	}
+
+		// $ipcr55 = Ipcr55::where([
+		// 		       'user_id' => Auth::user()->id,
+		// 		       'status55_id' => 2,
+				      
+		// 		])->get();
+
+		$ipcr55 = Ipcr55::where('user_id', '=', Auth::user()->id)->whereNotIn( 'status55_id', [1, 3, 4, 5])->get();
+  
         
 
 		if(Input::has('fstatus55_id')) { //relationship
@@ -123,12 +218,87 @@ class Ipcr55Controller extends Controller {
 		    }
 
 		}
+        
+		return view('admin.ipcr55.indexaccomplishments', compact('ipcr55'));
+	}
 
+	public function indexdivision(Request $request)
+    {
+		if(!Guard::allows('ipcr55_access')){
+			return abort(404);
+    	}
+    
+    	$division_id = Auth::user()->division_id;
+    	$mytime = Carbon::now();
+		$ddate =$mytime;
+		$date = new DateTime($ddate);
+		$week = $date->format("W");
 
+    	if(Auth::user()->roles55_id=="6"){
+        	// director
+
+        	$ipcr55= DB::select("SELECT DISTINCT 
+								I1.id as id,
+                                I1.ipcr_name as ipcr_name,
+								I1.semester as semester,
+								I1.year as year,
+								I1.updated_at as updated_at,
+								I1.active as active,
+								I1.created_at as created_at,
+								I5.status_name as status_name
+								FROM ipcr55 I1 LEFT JOIN users55 I2 ON I1.user_id = I2.id 
+								LEFT JOIN targets55 I3 ON I3.ipcr55_id = I1.id
+								LEFT JOIN tasks55 I4 ON I4.targets55_id = I3.id 
+								LEFT JOIN status55 I5 ON  I1.status55_id = I5.id
+								WHERE I1.status55_id = 6 and I2.roles55_id = 4 and I3.deleted_at IS NULL and I4.deleted_at IS NULL and I1.deleted_at IS NULL");
+        }elseif(Auth::user()->roles55_id=="4") {
+        	//division chief
+        	$ipcr55= DB::select("SELECT DISTINCT 
+								I1.id as id,
+                                I1.ipcr_name as ipcr_name,
+								I1.semester as semester,
+								I1.year as year,
+								I1.updated_at as updated_at,
+								I1.active as active,
+								I1.created_at as created_at,
+								I5.status_name as status_name
+								FROM ipcr55 I1 LEFT JOIN users55 I2 ON I1.user_id = I2.id 
+								LEFT JOIN targets55 I3 ON I3.ipcr55_id = I1.id
+								LEFT JOIN tasks55 I4 ON I4.targets55_id = I3.id 
+								LEFT JOIN status55 I5 ON  I1.status55_id = I5.id
+								WHERE I2.division_id = $division_id  and I1.status55_id = 1 and I2.roles55_id != 4 and I3.deleted_at IS NULL and I4.deleted_at IS NULL and I1.deleted_at IS NULL");
+
+        }elseif(Auth::user()->roles55_id=="7"){
+        	// senior
+        	$ipcr55= DB::select("SELECT DISTINCT 
+								I1.id as id,
+                                I1.ipcr_name as ipcr_name,
+								I1.semester as semester,
+								I1.year as year,
+								I1.updated_at as updated_at,
+								I1.active as active,
+								I1.created_at as created_at,
+								I5.status_name as status_name
+								FROM ipcr55 I1 LEFT JOIN users55 I2 ON I1.user_id = I2.id 
+								LEFT JOIN targets55 I3 ON I3.ipcr55_id = I1.id
+								LEFT JOIN tasks55 I4 ON I4.targets55_id = I3.id 
+								LEFT JOIN status55 I5 ON  I1.status55_id = I5.id
+								WHERE I2.division_id = $division_id  and I1.status55_id = 4 and I2.roles55_id != 4 and I2.roles55_id != 7 and I3.deleted_at IS NULL and I4.deleted_at IS NULL and I1.deleted_at IS NULL");
+
+        }
+		if(Input::has('fstatus55_id')) { //relationship
+		    $status55_data =  Input::get('fstatus55_id');
+
+		    if(!$status55_data == ''){
+		        $ipcr55 = $ipcr55->whereHas('status55', function ($query) use($status55_data)  {
+		            return $query->where('status55_id', $status55_data);
+		        });
+		    }
+
+		}
         ///filter fields
         $status55 = Status55::pluck("status_name", "id");
 
-        
 		return view('admin.ipcr55.ipcrIndex', compact('ipcr55', "status55"));
 		// return view('admin.ipcr55.index', compact('ipcr55', "status55"));
     }
@@ -152,7 +322,7 @@ class Ipcr55Controller extends Controller {
 		$week = $date->format("W");
 
     	if(Auth::user()->roles55_id=="6"){
-        	
+        	//director
 
         	$ipcr55= DB::select("SELECT DISTINCT 
 								I1.id as id,
@@ -167,9 +337,9 @@ class Ipcr55Controller extends Controller {
 								LEFT JOIN targets55 I3 ON I3.ipcr55_id = I1.id
 								LEFT JOIN tasks55 I4 ON I4.targets55_id = I3.id 
 								LEFT JOIN status55 I5 ON  I1.status55_id = I5.id
-								WHERE I1.status55_id = 1 and I2.roles55_id = 4 and I4.active=$week and I3.deleted_at IS NULL");
+								WHERE I1.status55_id = 1 and I2.roles55_id = 4 and I3.deleted_at IS NULL and I4.deleted_at IS NULL and I1.deleted_at IS NULL");
         }elseif(Auth::user()->roles55_id=="4") {
-
+        	//division chief
         	$ipcr55= DB::select("SELECT DISTINCT 
         						I1.id as id,
                                 I1.ipcr_name as ipcr_name,
@@ -181,9 +351,10 @@ class Ipcr55Controller extends Controller {
 								FROM ipcr55 I1 LEFT JOIN users55 I2 ON I1.user_id = I2.id 
 								LEFT JOIN targets55 I3 ON I3.ipcr55_id = I1.id
 								LEFT JOIN tasks55 I4 ON I4.targets55_id = I3.id 
-								WHERE I2.division_id = $division_id  and I4.status_id = 1 and I2.roles55_id != 4 and I3.deleted_at IS NULL and I4.deleted_at IS NULL");
+								WHERE I2.division_id = $division_id  and  I2.roles55_id != 4 and I3.deleted_at IS NULL and I4.deleted_at IS NULL and I1.deleted_at IS NULL and I1.status55_id IN (9,12) ");
 
         }elseif(Auth::user()->roles55_id=="7"){
+        	//senior
         	$ipcr55= DB::select("SELECT DISTINCT 
         						I1.id as id,
                                 I1.ipcr_name as ipcr_name,
@@ -195,17 +366,11 @@ class Ipcr55Controller extends Controller {
 								FROM ipcr55 I1 LEFT JOIN users55 I2 ON I1.user_id = I2.id 
 								LEFT JOIN targets55 I3 ON I3.ipcr55_id = I1.id
 								LEFT JOIN tasks55 I4 ON I4.targets55_id = I3.id 
-								WHERE I2.division_id = $division_id  and I4.status_id = 4 and I2.roles55_id != 4 and I2.roles55_id != 7 and I3.deleted_at IS NULL and I4.deleted_at IS NULL");
+								WHERE I1.status55_id IN (8,11) and I2.division_id = $division_id and I2.roles55_id != 4 and I2.roles55_id != 7 and I3.deleted_at IS NULL and I4.deleted_at IS NULL and I1.deleted_at IS NULL");
 
         	// return $ipcr55;
 
         }
-
-    	
-
-       
-       // return $ipcr55;
-        
 
 		if(Input::has('fstatus55_id')) { //relationship
 		    $status55_data =  Input::get('fstatus55_id');
@@ -225,82 +390,6 @@ class Ipcr55Controller extends Controller {
         
 		return view('admin.ipcr55.indexdivisionaccomplishment', compact('ipcr55', "status55"));
     }
-
-	public function index(Request $request)
-    {
-    	if(!Guard::allows('ipcr55_access')){
-    		return abort(404);
-    	}
-    	// $division_id = Auth::user()->division_id;
-    	
-
-        
-        	$ipcr55 = Ipcr55::where("user_id",Auth::user()->id);
-  			$ipcr55 = $ipcr55->get();
-  
-        
-
-		if(Input::has('fstatus55_id')) { //relationship
-		    $status55_data =  Input::get('fstatus55_id');
-
-		    if(!$status55_data == ''){
-		        $ipcr55 = $ipcr55->whereHas('status55', function ($query) use($status55_data)  {
-		            return $query->where('status55_id', $status55_data);
-		        });
-		    }
-
-		}
-
-
-        ///filter fields
-        $status55 = Status55::pluck("status_name", "id");
-
-        // if(Auth::user()->roles55_id=="4" || Auth::user()->roles55_id=="6"){
-        // 	return view('admin.ipcr55.ipcrIndex', compact('ipcr55', "status55"));
-        // }
-		return view('admin.ipcr55.index', compact('ipcr55', "status55"));
-	}
-
-	public function indexaccomplishments(Request $request)
-    {
-    	if(!Guard::allows('ipcr55_access')){
-    		return abort(404);
-    	}
-    	// $division_id = Auth::user()->division_id;
-    	
-
-        
-     //    	$ipcr55 = Ipcr55::where("user_id",Auth::user()->id);
-  			// $ipcr55 = $ipcr55->get();
-
-		$ipcr55 = Ipcr55::where([
-				       'user_id' => Auth::user()->id,
-				       'status55_id' => 2,
-				      
-				])->get();
-  
-        
-
-		if(Input::has('fstatus55_id')) { //relationship
-		    $status55_data =  Input::get('fstatus55_id');
-
-		    if(!$status55_data == ''){
-		        $ipcr55 = $ipcr55->whereHas('status55', function ($query) use($status55_data)  {
-		            return $query->where('status55_id', $status55_data);
-		        });
-		    }
-
-		}
-
-
-        ///filter fields
-        $status55 = Status55::pluck("status_name", "id");
-
-        // if(Auth::user()->roles55_id=="4" || Auth::user()->roles55_id=="6"){
-        // 	return view('admin.ipcr55.ipcrIndex', compact('ipcr55', "status55"));
-        // }
-		return view('admin.ipcr55.indexaccomplishments', compact('ipcr55', "status55"));
-	}
 
 	public function accomplishments($id,Request $request)
     {
@@ -322,95 +411,94 @@ class Ipcr55Controller extends Controller {
 		$targets = Targets55::where('ipcr55_id',decrypt($id))->orderBy('successindicators55_id')->get();
 		
 		$id = decrypt($id);
+
+		$checkadditional = Ipcr55::where('origid',$id)->count();
 		// return $id;
-
-		// $mytime = Carbon::now();
-		// $ddate =$mytime;
-		// $date = new DateTime($ddate);
-		// $weekfromform = $date->format("W");
 		
-			$tasks =DB::select("SELECT  
-								T4.strategicobjectives55_id as SO,
-                                T1.successindicators55_id as SI,
-								T1.name as targets,
-								T1.id as targets_id,
-								T2.id as tasks_id,
-								T2.name as tasks,
-								T2.weight as weight,
-			 					T2.percent_completed as percent,
-			 					T2.means_verification as verification,
-			 					T2.actual_verification as actual_verification,
-			 					T2.evaluation as evaluation,
-								T3.id as ipcr_id,
-								T2.active as week,
-                                T5.strategic_objective_name as SOname,
-                                T4.success_indicator_name as SIname
-								FROM tasks55 T2 LEFT JOIN targets55 T1 ON T1.id = T2.targets55_id 
-								LEFT JOIN ipcr55 T3 ON T1.ipcr55_id = T3.id
-                                LEFT JOIN successindicators55 T4 ON
-                                T1.successindicators55_id = T4.id
-                                LEFT JOIN strategicobjectives55 T5 ON T4.strategicobjectives55_id = T5.id
-								WHERE T1.ipcr55_id = $id and T2.deleted_at IS NULL and T1.deleted_at IS NULL order by SO, SI, targets
-								");
-			$tasks = collect($tasks);
+	
+		$tasks =DB::select("SELECT  
+							T4.strategicobjectives55_id as SO,
+                            T1.successindicators55_id as SI,
+							T1.name as targets,
+							T1.id as targets_id,
+							T2.id as tasks_id,
+							T2.name as tasks,
+							T2.weight as weight,
+		 					T2.percent_completed as percent,
+		 					T2.means_verification as verification,
+		 					T2.actual_verification as actual_verification,
+		 					T2.evaluation as evaluation,
+							T3.id as ipcr_id,
+							T2.active as week,
+                            T5.strategic_objective_name as SOname,
+                            T4.success_indicator_name as SIname,
+                            T2.senior_accomplishmentremarks as senior_accomplishmentremarks,
+                            T2.chief_accomplishmentremarks as chief_accomplishmentremarks
+							FROM tasks55 T2 LEFT JOIN targets55 T1 ON T1.id = T2.targets55_id 
+							LEFT JOIN ipcr55 T3 ON T1.ipcr55_id = T3.id
+                            LEFT JOIN successindicators55 T4 ON
+                            T1.successindicators55_id = T4.id
+                            LEFT JOIN strategicobjectives55 T5 ON T4.strategicobjectives55_id = T5.id
+							WHERE T1.ipcr55_id = $id and T2.deleted_at IS NULL and T1.deleted_at IS NULL order by SO, SI, targets
+							");
+		$tasks = collect($tasks);
 
-			$rowSOcount = DB::select("select count(so) as so_count, so as so_id from (SELECT  
-								T4.strategicobjectives55_id as SO,
-                                T1.successindicators55_id as SI,
-								T1.name as targets,
-								T1.id as targets_id,
-								T2.id as tasks_id,
-								T2.name as tasks,
-								T2.weight as weight,
-			 					T2.percent_completed as percent,
-			 					T2.means_verification as verification,
-			 					T2.actual_verification as actual_verification,
-			 					T2.evaluation as evaluation,
-								T3.id as ipcr_id,
-								T2.active as week
-								FROM tasks55 T2 LEFT JOIN targets55 T1 ON T1.id = T2.targets55_id 
-								LEFT JOIN ipcr55 T3 ON T1.ipcr55_id = T3.id
-                                LEFT JOIN successindicators55 T4 ON T1.successindicators55_id = T4.id
-								WHERE T1.ipcr55_id = $id and T2.deleted_at IS NULL and T1.deleted_at IS NULL order by SO, SI, targets) ipcrtable group by SO
-								");
-
-
-
-			$rowSOcount = collect($rowSOcount);
-
-			foreach($rowSOcount as $rowso) {
-				$so_row[$rowso->so_id] = $rowso->so_count;
-			}
+		$rowSOcount = DB::select("select count(so) as so_count, so as so_id from (SELECT  
+							T4.strategicobjectives55_id as SO,
+                            T1.successindicators55_id as SI,
+							T1.name as targets,
+							T1.id as targets_id,
+							T2.id as tasks_id,
+							T2.name as tasks,
+							T2.weight as weight,
+		 					T2.percent_completed as percent,
+		 					T2.means_verification as verification,
+		 					T2.actual_verification as actual_verification,
+		 					T2.evaluation as evaluation,
+							T3.id as ipcr_id,
+							T2.active as week
+							FROM tasks55 T2 LEFT JOIN targets55 T1 ON T1.id = T2.targets55_id 
+							LEFT JOIN ipcr55 T3 ON T1.ipcr55_id = T3.id
+                            LEFT JOIN successindicators55 T4 ON T1.successindicators55_id = T4.id
+							WHERE T1.ipcr55_id = $id and T2.deleted_at IS NULL and T1.deleted_at IS NULL order by SO, SI, targets) ipcrtable group by SO
+							");
 
 
-			$rowSIcount = DB::select("select count(SI) as si_count, SI as si_id from (SELECT  
-								T4.strategicobjectives55_id as SO,
-                                T1.successindicators55_id as SI,
-								T1.name as targets,
-								T1.id as targets_id,
-								T2.id as tasks_id,
-								T2.name as tasks,
-								T2.weight as weight,
-			 					T2.percent_completed as percent,
-			 					T2.means_verification as verification,
-			 					T2.actual_verification as actual_verification,
-			 					T2.evaluation as evaluation,
-								T3.id as ipcr_id,
-								T2.active as week
-								FROM tasks55 T2 LEFT JOIN targets55 T1 ON T1.id = T2.targets55_id 
-								LEFT JOIN ipcr55 T3 ON T1.ipcr55_id = T3.id
-                                LEFT JOIN successindicators55 T4 ON T1.successindicators55_id = T4.id
-								WHERE T1.ipcr55_id = $id and T2.deleted_at IS NULL and T1.deleted_at IS NULL order by SO, SI, targets) ipcrtable group by SI
-								");
+		$rowSOcount = collect($rowSOcount);
 
-			$rowSIcount = collect($rowSIcount);
+		foreach($rowSOcount as $rowso) {
+			$so_row[$rowso->so_id] = $rowso->so_count;
+		}
 
-			foreach($rowSIcount as $rowsi) {
-				$si_row[$rowsi->si_id] = $rowsi->si_count;
-			}
+
+		$rowSIcount = DB::select("select count(SI) as si_count, SI as si_id from (SELECT  
+							T4.strategicobjectives55_id as SO,
+                            T1.successindicators55_id as SI,
+							T1.name as targets,
+							T1.id as targets_id,
+							T2.id as tasks_id,
+							T2.name as tasks,
+							T2.weight as weight,
+		 					T2.percent_completed as percent,
+		 					T2.means_verification as verification,
+		 					T2.actual_verification as actual_verification,
+		 					T2.evaluation as evaluation,
+							T3.id as ipcr_id,
+							T2.active as week
+							FROM tasks55 T2 LEFT JOIN targets55 T1 ON T1.id = T2.targets55_id 
+							LEFT JOIN ipcr55 T3 ON T1.ipcr55_id = T3.id
+                            LEFT JOIN successindicators55 T4 ON T1.successindicators55_id = T4.id
+							WHERE T1.ipcr55_id = $id and T2.deleted_at IS NULL and T1.deleted_at IS NULL order by SO, SI, targets) ipcrtable group by SI
+							");
+
+		$rowSIcount = collect($rowSIcount);
+
+		foreach($rowSIcount as $rowsi) {
+			$si_row[$rowsi->si_id] = $rowsi->si_count;
+		}
 
 		// $view = "view";
-		return view('admin.ipcr55.accomplishments', compact('ipcr55', "status55","users55","successindicators55","targets","tasks","strategicobjectives","so_row","si_row"));
+		return view('admin.ipcr55.accomplishments', compact('ipcr55', "status55","users55","successindicators55","targets","tasks","strategicobjectives","so_row","si_row","checkadditional"));
 	}
 
 	/**
@@ -444,136 +532,7 @@ class Ipcr55Controller extends Controller {
 	 * @param  int  $id
 	 * @return \Illuminate\Http\Response
 	 */
-	public function show($id,Request $request)
-	{
-		// return decrypt($id);
-		
-		if(!Guard::allows('ipcr55_view')){
-			return abort(404);
-		}
-		// ---------------
-		if(!Guard::allows('targets55_create')){
-			return abort(404);
-		}
-	    $users55 = Users55::pluck("firstname", "id");
-		// $successindicators55 = SuccessIndicators55::pluck("success_indicator_name", "id",);
-		$successindicators55 = SuccessIndicators55::all();
-		$strategicobjectives = StrategicObjectives55::all();
-		
-
-		$ipcr55 = Ipcr55::find(decrypt($id));
-		// return $ipcr55;
-		$status55 = Status55::pluck("status_name", "id");
-		$targets = Targets55::where('ipcr55_id',decrypt($id))->orderBy('successindicators55_id')->get();
-		
-		$id = decrypt($id);
-		// return $id;
-
-		$mytime = Carbon::now();
-		$ddate =$mytime;
-		$date = new DateTime($ddate);
-		$weekfromform = $date->format("W");
-		
-			
-		$tasks =DB::select("SELECT  
-							T4.strategicobjectives55_id as SO,
-							T1.successindicators55_id as SI,
-							T1.name as targets,
-							T1.id as targets_id,
-							T2.id as tasks_id,
-							T2.name as tasks,
-							T2.weight as weight,
-							T2.percent_completed as percent,
-							T2.means_verification as verification,
-							T2.evaluation as evaluation,
-							T3.id as ipcr_id,
-							T2.active as week,
-							T5.strategic_objective_name as SOname,
-							T4.success_indicator_name as SIname,
-							T2.evaluation_divhead as evaluation_divhead
-							FROM tasks55 T2 LEFT JOIN targets55 T1 ON T1.id = T2.targets55_id 
-							LEFT JOIN ipcr55 T3 ON T1.ipcr55_id = T3.id
-							LEFT JOIN successindicators55 T4 ON T1.successindicators55_id = T4.id
-							LEFT JOIN strategicobjectives55 T5 ON T4.strategicobjectives55_id = T5.id
-							WHERE T1.ipcr55_id = $id and T2.deleted_at IS NULL and T1.deleted_at IS NULL order by SO, SI, targets
-							");
-		$tasks = collect($tasks);
-
-		
-
-		$rowSOcount = DB::select("select count(so) as so_count, so as so_id from (SELECT  
-							T4.strategicobjectives55_id as SO,
-							T1.successindicators55_id as SI,
-							T1.name as targets,
-							T1.id as targets_id,
-							T2.id as tasks_id,
-							T2.name as tasks,
-							T2.weight as weight,
-							T2.percent_completed as percent,
-							T2.means_verification as verification,
-							T2.evaluation as evaluation,
-							T3.id as ipcr_id,
-							T2.active as week,
-							T2.evaluation_divhead as evaluation_divhead
-							FROM tasks55 T2 LEFT JOIN targets55 T1 ON T1.id = T2.targets55_id 
-							LEFT JOIN ipcr55 T3 ON T1.ipcr55_id = T3.id
-							LEFT JOIN successindicators55 T4 ON T1.successindicators55_id = T4.id
-							WHERE T1.ipcr55_id = $id and T2.deleted_at IS NULL and T1.deleted_at IS NULL order by SO, SI, targets) ipcrtable group by SO
-							");
-
-
-
-		$rowSOcount = collect($rowSOcount);
-
-		if($rowSOcount->count()==0){
-			$so_row=0;
-		}
-
-		foreach($rowSOcount as $rowso) {
-			$so_row[$rowso->so_id] = $rowso->so_count;
-		}
-
-
-
-
-		$rowSIcount = DB::select("select count(SI) as si_count, SI as si_id from (SELECT  
-							T4.strategicobjectives55_id as SO,
-							T1.successindicators55_id as SI,
-							T1.name as targets,
-							T1.id as targets_id,
-							T2.id as tasks_id,
-							T2.name as tasks,
-							T2.weight as weight,
-							T2.percent_completed as percent,
-							T2.means_verification as verification,
-							T2.evaluation as evaluation,
-							T3.id as ipcr_id,
-							T2.active as week,
-							T2.evaluation_divhead as evaluation_divhead
-							FROM tasks55 T2 LEFT JOIN targets55 T1 ON T1.id = T2.targets55_id 
-							LEFT JOIN ipcr55 T3 ON T1.ipcr55_id = T3.id
-							LEFT JOIN successindicators55 T4 ON T1.successindicators55_id = T4.id
-							WHERE T1.ipcr55_id = $id and T2.deleted_at IS NULL and T1.deleted_at IS NULL order by SO, SI, targets) ipcrtable group by SI
-							");
-
-
-
-		$rowSIcount = collect($rowSIcount);
-
-		if($rowSIcount->count()==0){
-			$si_row=0;
-		}
-
-		foreach($rowSIcount as $rowsi) {
-			$si_row[$rowsi->si_id] = $rowsi->si_count;
-		}
-
-		// return $so_row;
-
-
-		// $view = "view";
-		return view('admin.ipcr55.show', compact('ipcr55', "status55","users55","successindicators55","targets","tasks","strategicobjectives","so_row","si_row","id"));
-	}
+	
 
 	/**
 	 * Store a newly created ipcr55 in storage.
@@ -583,8 +542,6 @@ class Ipcr55Controller extends Controller {
 	 */
 	public function store(CreateIpcr55Request $request)
 	{
-		// return "hello";
-		
 		
 		if(!Guard::allows('ipcr55_create')){
 			return abort(404);
@@ -686,8 +643,6 @@ class Ipcr55Controller extends Controller {
 
 	public function storedivisionaccomplishments(Request $request)
 	{
-		// return "hello";
-		
 		
 		if(!Guard::allows('ipcr55_create')){
 			return abort(404);
@@ -1073,7 +1028,7 @@ class Ipcr55Controller extends Controller {
 								LEFT JOIN tasks55 I4 ON I4.targets55_id = I3.id 
 								LEFT JOIN status55 I5 ON  I1.status55_id = I5.id
 								LEFT JOIN successindicators55 I6 ON I3.successindicators55_id = I6.id
-								WHERE I1.id = $id and I3.deleted_at IS NULL and I4.deleted_at IS NULL and I4.status_id= $taskstatus order by SO, SI, targets
+								WHERE I1.id = $id and I3.deleted_at IS NULL and I4.deleted_at IS NULL order by SO, SI, targets
 
 							");
 			$tasks = collect($tasks);
@@ -1097,7 +1052,7 @@ class Ipcr55Controller extends Controller {
 								LEFT JOIN tasks55 I4 ON I4.targets55_id = I3.id 
 								LEFT JOIN status55 I5 ON  I1.status55_id = I5.id
 								LEFT JOIN successindicators55 I6 ON I3.successindicators55_id = I6.id
-								WHERE I1.id = $id and I3.deleted_at IS NULL and I4.deleted_at IS NULL and I4.status_id= $taskstatus order by SO, SI, targets) ipcrtable group by SO
+								WHERE I1.id = $id and I3.deleted_at IS NULL and I4.deleted_at IS NULL  order by SO, SI, targets) ipcrtable group by SO
 								");
 
 
@@ -1128,7 +1083,7 @@ class Ipcr55Controller extends Controller {
 								LEFT JOIN tasks55 I4 ON I4.targets55_id = I3.id 
 								LEFT JOIN status55 I5 ON  I1.status55_id = I5.id
 								LEFT JOIN successindicators55 I6 ON I3.successindicators55_id = I6.id
-								WHERE I1.id = $id and I3.deleted_at IS NULL and I4.deleted_at IS NULL and I4.status_id= $taskstatus order by SO, SI, targets) ipcrtable group by SI
+								WHERE I1.id = $id and I3.deleted_at IS NULL and I4.deleted_at IS NULL order by SO, SI, targets) ipcrtable group by SI
 								");
 
 
@@ -1151,17 +1106,6 @@ class Ipcr55Controller extends Controller {
 	 * @param  int  $id
      * @return \Illuminate\View\View
 	 */
-	public function edit($id)
-	{
-		if(!Guard::allows('ipcr55_edit')){
-   			return abort(404);
-   		}
-		$ipcr55 = Ipcr55::find(decrypt($id));
-	    $status55 = Status55::pluck("status_name", "id");
-
-	    
-		return view('admin.ipcr55.edit', compact('ipcr55', "status55"));
-	}
 
 	/**
 	 * Update the specified ipcr55 in storage.
@@ -1239,6 +1183,13 @@ class Ipcr55Controller extends Controller {
 			}
 
 			
+	    }elseif($status=="revise"){
+	    	Ipcr55::where('id', $id)
+	                            ->update([
+	                                'status55_id' =>3,
+	                                
+	                            ]);
+
 	    }
 		
 
@@ -1254,10 +1205,11 @@ class Ipcr55Controller extends Controller {
 
 		if(Auth::user()->roles55_id=="7")
 		{
+			// if senior
 			$taskstatus = 4;
 		}elseif(Auth::user()->roles55_id=="4")
 		{
-			// return "cheif";
+			// if division
 			$taskstatus = 1;
 		}
 
@@ -1266,7 +1218,8 @@ class Ipcr55Controller extends Controller {
 								FROM ipcr55 I1 LEFT JOIN users55 I2 ON I1.user_id = I2.id 
 								LEFT JOIN targets55 I3 ON I3.ipcr55_id = I1.id
 								LEFT JOIN tasks55 I4 ON I4.targets55_id = I3.id 
-								WHERE I1.id=$id and I3.deleted_at IS NULL and I4.deleted_at IS NULL and I4.status_id=$taskstatus
+								WHERE I1.id=$id and I3.deleted_at IS NULL and I4.deleted_at IS NULL and I1.deleted_at IS NULL
+								
 							");
 
 		$rowtasks = count($tasks);
@@ -1308,20 +1261,138 @@ class Ipcr55Controller extends Controller {
                             ]);
 				
 		    }
+		    elseif($status=="revise"){
+				
+				
+				
+					Tasks55::where('id', $tasks[$i]->tasks_id)
+                            ->update([
+                                'status_id' =>3,
+                                
+                            ]);
+				
+		    }
+		    elseif($status=="reviseaccomplishment"){
+				
+				
+				
+					Tasks55::where('id', $tasks[$i]->tasks_id)
+                            ->update([
+                                'status_id' =>10,
+                                
+                            ]);
+
+                    Ipcr55::where('id', $id)
+                            ->update([
+                                'status55_id' =>10,
+                                
+                            ]);
+				
+		    }
+		    elseif($status=="reviseadditional"){
+				
+				
+				
+					Tasks55::where('id', $tasks[$i]->tasks_id)
+                            ->update([
+                                'status_id' =>13,
+                                
+                            ]);
+                    Ipcr55::where('id', $id)
+                            ->update([
+                                'status55_id' =>13,
+                                
+                            ]);
+				
+		    }
+		    elseif($status=="approvalaccomplishment"){
+				
+				
+				
+					Tasks55::where('id', $tasks[$i]->tasks_id)
+                            ->update([
+                                'status_id' =>9,
+                                
+                            ]);
+                    Ipcr55::where('id', $id)
+                            ->update([
+                                'status55_id' =>9,
+                                
+                            ]);
+				
+		    }
+		    elseif($status=="approvaladditional"){
+				
+				
+				
+					Tasks55::where('id', $tasks[$i]->tasks_id)
+                            ->update([
+                                'status_id' =>12,
+                                
+                            ]);
+
+                    Ipcr55::where('id', $id)
+                            ->update([
+                                'status55_id' =>12,
+                                
+                            ]);
+				
+		    }
+		   
+		    elseif($status=="completed"){
+				
+				Tasks55::where('id', $tasks[$i]->tasks_id)
+	                    ->update([
+	                        'status_id' =>7,
+	                        
+	                    ]);
+
+	            Ipcr55::where('id', $id)
+	                    ->update([
+	                        'status55_id' =>7,
+	                        
+	                    ]);
+
+
+	            $ipcr = Ipcr55::where('id',$id)->first();
+			     if(!empty($ipcr->origid) && Auth::user()->roles55_id=="4"){
+			     	//completed additional 
+			     $target = Targets55::where('ipcr55_id',$id)->first();
+							
+
+				            Tasks55::where('id', $tasks[$i]->tasks_id)
+						                    ->update([
+						                        'targets55_id' =>$target->origid,
+						                        
+						                    ]);
+
+						    $gettask = Tasks55::where('targets55_id',$target->origid)->get();
+							$percenttarget = collect($gettask)->sum('percent');
+
+					       
+					        Targets55::where('id',$target->origid)
+				                            ->update([
+				                                'ipcr55_id' => $ipcr->origid,
+				                                'percent' =>  $percenttarget, 
+				                                
+				                            ]);
+
+
+				            Ipcr55::where('id', $id)
+				                            ->update([
+				                                'origid' => NULL,
+				                                
+				                            ]);
+				            Targets55::destroy($target->id);
+				        	Ipcr55::destroy($id);
+				}
+				
+		    }
 		
 	     }
-	     $ipcr = Ipcr55::where('id',$id)->first();
-	     if(!empty($ipcr->origid) && Auth::user()->roles55_id=="4"){
-	     $target = Targets55::where('ipcr55_id',$id)->first();
-					
-					Targets55::where('ipcr55_id', $id)
-		                            ->update([
-		                                'ipcr55_id' => $ipcr->origid,
-		                                
-		                            ]);
-		            Targets55::destroy($target->origid);
-		        	Ipcr55::destroy($id);
-		}
+
+
+
 
 		
 
@@ -1331,12 +1402,12 @@ class Ipcr55Controller extends Controller {
 
 	public function verifyaccomplishment($id,Request $request)
 	{
-		$week_year = $request->input('targetweekform');
-		$week = substr($week_year, strpos($week_year, "W") + 1);   
-		$year = strtok($week_year, '-');
-		$dto = new DateTime();
-		$firstday = $dto->setISODate($year, $week)->format('Y-m-d');
-		$lastday = $dto->modify('+6 days')->format('Y-m-d');
+		// $week_year = $request->input('targetweekform');
+		// $week = substr($week_year, strpos($week_year, "W") + 1);   
+		// $year = strtok($week_year, '-');
+		// $dto = new DateTime();
+		// $firstday = $dto->setISODate($year, $week)->format('Y-m-d');
+		// $lastday = $dto->modify('+6 days')->format('Y-m-d');
 
 		
 		// return $firstday;
@@ -1344,12 +1415,12 @@ class Ipcr55Controller extends Controller {
 
 		$status = $request->input('statusofipcr');
 
-		 $tasks =DB::select("SELECT
+		$tasks =DB::select("SELECT
 								I4.id as tasks_id
 								FROM ipcr55 I1 LEFT JOIN users55 I2 ON I1.user_id = I2.id 
 								LEFT JOIN targets55 I3 ON I3.ipcr55_id = I1.id
 								LEFT JOIN tasks55 I4 ON I4.targets55_id = I3.id 
-								WHERE I1.id=$id and I3.deleted_at IS NULL and I4.deleted_at IS NULL and I4.actualdate_s >= '$firstday' and I4.actualdate_s <= '$lastday' and I4.actualdate_e >= '$firstday' and I4.actualdate_e <= '$lastday'
+								WHERE I1.id=$id and I3.deleted_at IS NULL and I4.deleted_at IS NULL and I1.deleted_at IS NULL
 
 							");
 
@@ -1362,11 +1433,42 @@ class Ipcr55Controller extends Controller {
 
         	for($i=0;$i<$rowtasks;$i++){
         		
-		        Tasks55::where('id', $tasks[$i]->tasks_id)
+
+
+	        	 if($status=="verifyaccomplishment"){
+				
+				
+				
+					Tasks55::where('id', $tasks[$i]->tasks_id)
+                            ->update([
+                                'status_id' =>8,
+                                
+                            ]);
+
+                    Ipcr55::where('id', $id)
+                            ->update([
+                                'status55_id' =>8,
+                                
+                            ]);
+				
+			    }
+			     elseif($status=="verifyadditional"){
+					
+					
+					
+						Tasks55::where('id', $tasks[$i]->tasks_id)
 	                            ->update([
-	                                'status_id' =>4,
+	                                'status_id' =>11,
 	                                
 	                            ]);
+
+	                    Ipcr55::where('id', $id)
+	                            ->update([
+	                                'status55_id' =>11,
+	                                
+	                            ]);
+				
+		    	}
 		     }
 
 
@@ -1380,24 +1482,34 @@ class Ipcr55Controller extends Controller {
 
 	public function printIPCR($id)
 	{
-		$users55 = Users55::pluck("firstname", "id");
+		$name =  Auth::user()->firstname.' '. Auth::user()->lastname;
+		$date = Carbon::today()->toDateString();
+		
+
+		$users55 = Users55::find( Auth::user()->id);
 		// $successindicators55 = SuccessIndicators55::pluck("success_indicator_name", "id",);
 		$successindicators55 = SuccessIndicators55::all();
 		$strategicobjectives = StrategicObjectives55::all();
 		
 
 		$ipcr55 = Ipcr55::find($id);
-		// return $ipcr55;
+		$division = Division55::pluck("division_name", "division_chief");
+		if ( $ipcr55->semester==1 ){
+			$month = "January to June";
+		}
+		else {
+			$month = "July to December";
+		}
 		$status55 = Status55::pluck("status_name", "id");
 		$targets = Targets55::where('ipcr55_id',$id)->orderBy('successindicators55_id')->get();
 		
 		$id =$id;
 		// return $id;
 
-		$mytime = Carbon::now();
-		$ddate =$mytime;
-		$date = new DateTime($ddate);
-		$weekfromform = $date->format("W");
+		// $mytime = Carbon::now();
+		// $ddate =$mytime;
+		// $date = new DateTime($ddate);
+		// $weekfromform = $date->format("W");
 		
 			
 		$tasks =DB::select("SELECT  
@@ -1494,11 +1606,146 @@ class Ipcr55Controller extends Controller {
 		}
 
 		
-		// return view('admin.ipcr55.printIPCR', compact('ipcr55', "status55","users55","successindicators55","targets","tasks","strategicobjectives","so_row","si_row","id"));
+		// return view('admin.ipcr55.printIPCR', compact('ipcr55', "status55","users55","successindicators55","targets","tasks","strategicobjectives","so_row","si_row","id","name","date","month"));
 	
-		$pdf = PDF::loadView('admin.ipcr55.printIPCR',compact('ipcr55', "status55","users55","successindicators55","targets","tasks","strategicobjectives","so_row","si_row","id"))->setPaper('a4', 'landscape');
+		$pdf = PDF::loadView('admin.ipcr55.printIPCR',compact('ipcr55', "status55","users55","successindicators55","targets","tasks","strategicobjectives","so_row","si_row","id","name","date","month"))->setPaper('a4', 'landscape');
 		// return view('admin.ipcr55.printIPCR', compact('ipcr55'));
         return $pdf->download('ipcr.pdf');
+       
+
+	}
+
+	public function printAccomplishments($id)
+	{
+		$name =  Auth::user()->firstname.' '. Auth::user()->lastname;
+		$date = Carbon::today()->toDateString();
+		
+
+		$users55 = Users55::find( Auth::user()->id);
+		// $successindicators55 = SuccessIndicators55::pluck("success_indicator_name", "id",);
+		$successindicators55 = SuccessIndicators55::all();
+		$strategicobjectives = StrategicObjectives55::all();
+		
+
+		$ipcr55 = Ipcr55::find($id);
+		$division = Division55::pluck("division_name", "division_chief");
+		if ( $ipcr55->semester==1 ){
+			$month = "January to June";
+		}
+		else {
+			$month = "July to December";
+		}
+		$status55 = Status55::pluck("status_name", "id");
+		$targets = Targets55::where('ipcr55_id',$id)->orderBy('successindicators55_id')->get();
+		
+		$id =$id;
+		// return $id;
+
+		// $mytime = Carbon::now();
+		// $ddate =$mytime;
+		// $date = new DateTime($ddate);
+		// $weekfromform = $date->format("W");
+		
+			
+		$tasks =DB::select("SELECT  
+							T4.strategicobjectives55_id as SO,
+							T1.successindicators55_id as SI,
+							T1.name as targets,
+							T1.id as targets_id,
+							T2.id as tasks_id,
+							T2.name as tasks,
+							T2.weight as weight,
+							T2.percent_completed as percent,
+							T2.means_verification as verification,
+							T2.evaluation as evaluation,
+							T3.id as ipcr_id,
+							T2.active as week,
+							T5.strategic_objective_name as SOname,
+							T4.success_indicator_name as SIname,
+							T2.evaluation_divhead as evaluation_divhead
+							FROM tasks55 T2 LEFT JOIN targets55 T1 ON T1.id = T2.targets55_id 
+							LEFT JOIN ipcr55 T3 ON T1.ipcr55_id = T3.id
+							LEFT JOIN successindicators55 T4 ON T1.successindicators55_id = T4.id
+							LEFT JOIN strategicobjectives55 T5 ON T4.strategicobjectives55_id = T5.id
+							WHERE T1.ipcr55_id = $id and T2.deleted_at IS NULL and T1.deleted_at IS NULL order by SO, SI, targets
+							");
+		$tasks = collect($tasks);
+
+		
+
+		$rowSOcount = DB::select("select count(so) as so_count, so as so_id from (SELECT  
+							T4.strategicobjectives55_id as SO,
+							T1.successindicators55_id as SI,
+							T1.name as targets,
+							T1.id as targets_id,
+							T2.id as tasks_id,
+							T2.name as tasks,
+							T2.weight as weight,
+							T2.percent_completed as percent,
+							T2.means_verification as verification,
+							T2.evaluation as evaluation,
+							T3.id as ipcr_id,
+							T2.active as week,
+							T2.evaluation_divhead as evaluation_divhead
+							FROM tasks55 T2 LEFT JOIN targets55 T1 ON T1.id = T2.targets55_id 
+							LEFT JOIN ipcr55 T3 ON T1.ipcr55_id = T3.id
+							LEFT JOIN successindicators55 T4 ON T1.successindicators55_id = T4.id
+							WHERE T1.ipcr55_id = $id and T2.deleted_at IS NULL and T1.deleted_at IS NULL order by SO, SI, targets) ipcrtable group by SO
+							");
+
+
+
+		$rowSOcount = collect($rowSOcount);
+
+		if($rowSOcount->count()==0){
+			$so_row=0;
+		}
+
+		foreach($rowSOcount as $rowso) {
+			$so_row[$rowso->so_id] = $rowso->so_count;
+		}
+
+
+
+
+		$rowSIcount = DB::select("select count(SI) as si_count, SI as si_id from (SELECT  
+							T4.strategicobjectives55_id as SO,
+							T1.successindicators55_id as SI,
+							T1.name as targets,
+							T1.id as targets_id,
+							T2.id as tasks_id,
+							T2.name as tasks,
+							T2.weight as weight,
+							T2.percent_completed as percent,
+							T2.means_verification as verification,
+							T2.evaluation as evaluation,
+							T3.id as ipcr_id,
+							T2.active as week,
+							T2.evaluation_divhead as evaluation_divhead
+							FROM tasks55 T2 LEFT JOIN targets55 T1 ON T1.id = T2.targets55_id 
+							LEFT JOIN ipcr55 T3 ON T1.ipcr55_id = T3.id
+							LEFT JOIN successindicators55 T4 ON T1.successindicators55_id = T4.id
+							WHERE T1.ipcr55_id = $id and T2.deleted_at IS NULL and T1.deleted_at IS NULL order by SO, SI, targets) ipcrtable group by SI
+							");
+
+
+
+		$rowSIcount = collect($rowSIcount);
+
+		if($rowSIcount->count()==0){
+			$si_row=0;
+		}
+
+		foreach($rowSIcount as $rowsi) {
+			$si_row[$rowsi->si_id] = $rowsi->si_count;
+		}
+
+		
+		// return view('admin.ipcr55.printAccomplishments', compact('ipcr55', "status55","users55","successindicators55","targets","tasks","strategicobjectives","so_row","si_row","id","name","date","month"));
+	
+		$pdf = PDF::loadView('admin.ipcr55.printAccomplishments',compact('ipcr55', "status55","users55","successindicators55","targets","tasks","strategicobjectives","so_row","si_row","id","name","date","month"))->setPaper('a4', 'landscape');
+		// return view('admin.ipcr55.printIPCR', compact('ipcr55'));
+        return $pdf->download('accomplishments.pdf');
        
 
 	}

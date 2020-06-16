@@ -57,7 +57,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'admin', 'as' => 'admin.'], 
     Route::resource('successindicators55','Admin\SuccessIndicators55Controller');
     Route::post('ipcr55/massDelete', ['as' => 'ipcr55.massDelete','uses' => 'Admin\Ipcr55Controller@massDelete',]);
 
-
+    // IPCR 
     // Route::get('ipcr55/indexdivision','Admin\Ipcr55Controller@indexdivision')->name("indexdivision");
     Route::get('showdivision/{id}', ['as' => 'showdivision/','uses' => 'Admin\Ipcr55Controller@showDivision',]);
     Route::get('showaccomplishment_division/{id}', ['as' => 'showaccomplishment_division/','uses' => 'Admin\Ipcr55Controller@showaccomplishment_division',]);
@@ -116,6 +116,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'admin', 'as' => 'admin.'], 
     Route::resource('tasksusers55','Admin\TasksUsers55Controller');
 
     Route::get('printIPCR/{id}', ['as' => 'printIPCR','uses' => 'Admin\Ipcr55Controller@printIPCR',]);
+    Route::get('printAccomplishments/{id}', ['as' => 'printAccomplishments','uses' => 'Admin\Ipcr55Controller@printAccomplishments',]);
     
 
     Route::get('query/{division_id}',function($division_id){

@@ -23,6 +23,7 @@ use App\Users55;
 use App\SuccessIndicators55;
 use App\Ipcr55;
 use App\Tasks55;
+
 use App\Files55;
 
 
@@ -173,6 +174,7 @@ class Targets55Controller extends Controller {
 
 		$ipcr55 = Ipcr55::pluck("ipcr_name", "id");
 		$tasks = Tasks55::where('targets55_id',$id)->get();
+		$targets55 = Targets55::find($id);
 		// return $tasks;
 		$files = DB::select("SELECT DISTINCT 
 								T1.id as id,
@@ -198,7 +200,7 @@ class Targets55Controller extends Controller {
 
 
 	    
-	    return view('admin.targets55.createaccomplishment', compact("successindicators55", "ipcr55","strategicObj","success_data","id","tasks","files"));
+	    return view('admin.targets55.createaccomplishment', compact("targets55","successindicators55", "ipcr55","strategicObj","success_data","id","tasks","files"));
 	}
 
 	public function additionaldivisionaccomplishments($id)
@@ -332,20 +334,31 @@ class Targets55Controller extends Controller {
 			return abort(404);
 		}
 		$ipcr_id = $request->input('ipcr55_id');
-		// return $ipcr_id;
-		
+		$original_ipcr = Ipcr55::where('id',$ipcr_id)->first();
+		// return $original_ipcr;
+
+		$ipcrcount = Ipcr55::where('user_id', Auth::user()->id)->count();
+		$date = str_replace("-", "", Carbon::today()->toDateString());
+		$name =  Auth::user()->firstname.Auth::user()->lastname; 
+
 		$newipcr = new Ipcr55();
-        $newipcr->ipcr_name = Auth::user()->lastname.'-additionalAccomplishment';
-        $newipcr->status55_id = 2;
+        $newipcr->ipcr_name =$name.'-additional-'.$date.'-'.$ipcrcount;
+        $newipcr->status55_id = 11;
         $newipcr->user_id = Auth::user()->id;
         $newipcr->active = 1;
         $newipcr->origid = $ipcr_id;
+        $newipcr->semester = $original_ipcr->semester;
+        $newipcr->year = $original_ipcr->year;
         $newipcr->save();
 		// return $request->input('name');
         $newtargets = new Targets55();
         $newtargets->name = $request->input('name');
-        $newtargets->users55_id = Auth::user()->id;
+        $newtargets->users55_id = Auth::user()->id;git 
         $newtargets->successindicators55_id = $request->input('successindicators');
+        $newtargets->efficiency = $request->input('efficiency');
+        $newtargets->quality = $request->input('quality');
+        $newtargets->timeliness = $request->input('timeliness');
+        $newtargets->eqt_ave = $request->input('eqt_ave');
         $newtargets->ipcr55_id = $newipcr->id;
         $newtargets->save();
            
@@ -372,7 +385,7 @@ class Targets55Controller extends Controller {
 	        $newTask->percent_completed = $percent_completed[$i];
 	        
 	        $newTask->actual_verification = $actualverification[$i];
-	        $newTask->status_id = 4;
+	        $newTask->status_id =11;
 	        $newTask->save();
 
         }
@@ -644,12 +657,16 @@ class Targets55Controller extends Controller {
 		if(!Guard::allows('targets55_edit')){
    			return abort(404);
    		}
-		$targets55 = Targets55::find($id);
-		// return $targets55;
+   		
+		$targets55 = Targets55::where('id',$id)->first();
+		
 	    $users55 = Users55::pluck("firstname", "id");
 		$successindicators55 = SuccessIndicators55::pluck("success_indicator_name", "id");
 		
-		$ipcr55 = Ipcr55::pluck("ipcr_name", "id");
+		$ipcr55 = Ipcr55::where("id",$targets55->ipcr55_id)->first();
+		// return $ipcr55;
+
+
 		$tasks = Tasks55::where('targets55_id',$id)->get();
 		// return $tasks;
 		$files = DB::select("SELECT DISTINCT 
@@ -717,6 +734,8 @@ class Targets55Controller extends Controller {
 		$weight = $request->input('weight');
 		$task_name = $request->input('task_accomplishments');
 		$percent = $request->input('percent_completed');
+		$targetstartdate = $request->input('target_start');
+		$targetenddate = $request->input('target_end');
 		$startdate = $request->input('actual_start');
 		$enddate = $request->input('actual_end');
 		$verification = $request->input('actual_verification');
@@ -761,12 +780,21 @@ class Targets55Controller extends Controller {
 	                                'percent' =>  $percenttarget, 
 	                            ]);
 
+
+			$original_ipcr = Ipcr55::where('id',$ipcr)->first();
+
+			$ipcrcount = Ipcr55::where('user_id', Auth::user()->id)->count();
+			$date = str_replace("-", "", Carbon::today()->toDateString());
+			$name =  Auth::user()->firstname.Auth::user()->lastname; 
+
 			$newipcr = new Ipcr55();
-	        $newipcr->ipcr_name = Auth::user()->lastname.'-additionalAccomplishment';
-	        $newipcr->status55_id = 2;
+	        $newipcr->ipcr_name =$name.'-additional-'.$date.'-'.$ipcrcount;
+	        $newipcr->status55_id = 11;
 	        $newipcr->user_id = Auth::user()->id;
 	        $newipcr->active = 1;
 	        $newipcr->origid = $ipcr;
+	        $newipcr->semester = $original_ipcr->semester;
+	        $newipcr->year = $original_ipcr->year;
 	        $newipcr->save();
 
 	        $newtargets = new Targets55();
@@ -776,15 +804,7 @@ class Targets55Controller extends Controller {
 	        $newtargets->ipcr55_id = $newipcr->id;
 	        $newtargets->origid = decrypt($id);
 	        $newtargets->save();
-	           // return  $request->input('successindicators');
-
-
-	       
-	  //       $request->request->add(['ipcr55_id' => $newipcr->id]);
-			// $targets = Targets55::create($request->all());
-
-		
-	        // $task_id = $request->input('task_id');
+	           
 			$task_accomplishments = $request->input('task_accomplishments');
 			$percent_completed = $request->input('percent_completed');
 			$targetstart = $request->input('target_start');
@@ -793,10 +813,9 @@ class Targets55Controller extends Controller {
 			$actualend = $request->input('actual_end');
 			$actualverification = $request->input('actual_verification');
 			$weight = $request->input('weight');
-			// return $task_accomplishments[1];
-
 		
-	        for ($i=0; $i < count($task_accomplishments); $i++) {
+		
+	        for ($i=$rowcount; $i < count($task_accomplishments); $i++) {
 
 	        	$newTask = new Tasks55();
 		        $newTask->name = $task_accomplishments[$i];
@@ -812,15 +831,10 @@ class Targets55Controller extends Controller {
 				}
 		       	$newTask->weight = $weight[$i];
 		        $newTask->actual_verification = $actualverification[$i];
-		        $newTask->status_id = 4;
+		        $newTask->status_id = 11;
 		        $newTask->save();
 
 	        }
-
-	       
-
-
-
 
 		}else 
 		{
@@ -833,10 +847,13 @@ class Targets55Controller extends Controller {
 
 	    		Tasks55::where('id', $taskId)
 	                        ->update([
+	                            'name' =>  $task_name[$i], 
+	                            'duration_s' =>  date("Y-m-d H:i:s", strtotime($targetstartdate[$i])), 
+	                            'duration_e' =>  date("Y-m-d H:i:s", strtotime($targetenddate[$i])), 
 	                            'percent_completed' =>  $percent[$i], 
 	                            'actual_verification' => $verification[$i],
-	                            'actualdate_s' => $startdate[$i],
-	                            'actualdate_e' => $enddate[$i],
+	                            'actualdate_s' => date("Y-m-d H:i:s", strtotime($startdate[$i])),
+	                            'actualdate_e' => date("Y-m-d H:i:s", strtotime($enddate[$i])),
 	                            'percent' =>  $taskpercentage, 
 	                            
 	                        ]);
@@ -849,6 +866,8 @@ class Targets55Controller extends Controller {
 	                            ->update([
 	                                'percent' =>  $percenttarget, 
 	                            ]);
+
+	     
 		}
 		
         	

@@ -86,7 +86,7 @@
                          </div>
                     </td>
                     <td>
-                        <textarea rows="2" cols="50" name="evaluation[]"></textarea>
+                        <textarea rows="2" cols="50" name="evaluation[]">{{$task->evaluation}}</textarea>
                     </td>
                     
                    
